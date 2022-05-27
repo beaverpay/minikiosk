@@ -12,7 +12,7 @@ const pool = mariadb.createPool({
 });
 
 //미완성
-async function asyncFunction(sql, callback) {
+async function excuteStatement(sql, callback) {
   let conn;
   let result;
   try {
@@ -28,4 +28,4 @@ async function asyncFunction(sql, callback) {
   }
 }
 
-module.exports = asyncFunction;
+module.exports = excuteStatement;
