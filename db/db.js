@@ -11,7 +11,7 @@ const pool = mariadb.createPool({
   connectionLimit: config.connectionLimit
 });
 
-//미완성
+//커넥션 풀로부터 connection을 하나 얻어 쿼리를 보내고 connection을 반환 한다.
 async function excuteStatement(sql, callback, values) {
   let conn;
   let result;
@@ -19,12 +19,10 @@ async function excuteStatement(sql, callback, values) {
 	  conn = await pool.getConnection();
     result = await conn.query(sql, values);
     callback(result);
-    console.log('callback end');
   } catch (err) {
 	  throw err;
   } finally {
 	  if (conn) {
-      console.log('finally start');
       return conn.end()
     };
   }
