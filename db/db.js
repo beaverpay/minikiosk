@@ -12,20 +12,21 @@ const pool = mariadb.createPool({
 });
 
 //미완성
-async function excuteStatement(sql, callback) {
+async function excuteStatement(sql, callback, values) {
   let conn;
   let result;
   try {
 	  conn = await pool.getConnection();
     result = await conn.query(sql, values);
-    return callback(result);
+    callback(result);
+    console.log('callback end');
   } catch (err) {
 	  throw err;
   } finally {
 	  if (conn) {
+      console.log('finally start');
       return conn.end()
     };
-    return;
   }
 }
 

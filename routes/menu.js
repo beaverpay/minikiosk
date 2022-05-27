@@ -1,23 +1,26 @@
-var express = require('express');
-var router = express.Router();
-var urlencode = require('urlencode')
-var excuteStatement = require('../db/db');
+let express = require('express');
+let router = express.Router();
+let JSONbig = require('json-bigint');
+let excuteStatement = require('../db/db');
 
-/* GET users listing. */
+
+
 router.get('/menuList', function(req, res, next) {
     excuteStatement('select * from menu',function(menuList){
         res.send(menuList);
     });
 });
 
-router.get('/menuAddition', function(req, res, next) {
-    let menu_name = urlencode.decode(req.param('menu_name'));
-    let menu_price = urlencode.decode(req.param('menu_name'));
-    let menu_des = urlencode.decode(req.param('menu_name'));
-    excuteStatement('insert into menu values(?,?,?,?)',[menu_name,menu_price,menu_des],function(result){
-        res.send(result);
-    })
-    res.send('respond with a resource');
+router.post('/registMenu', function(req, res, next) {
+    let params = req.body;
+    let values = [null,params.menu_name,params.menu_price,params.menu_des];
+    /*
+    insert query의 결과 중 insertId가 bigint type 으로 반환 되기 때문에 처리 하지 못하는 문제 발생
+    json-bigint라이브러리 이용하여 처리
+    */
+    excuteStatement('insert into menu values(?,?,?,?)', function(result){
+        res.send(JSON.parse(JSONbig.stringify(result)))
+    }, values);
 });
 
 module.exports = router;
