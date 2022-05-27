@@ -17,7 +17,7 @@ async function excuteStatement(sql, callback) {
   let result;
   try {
 	  conn = await pool.getConnection();
-    result = await conn.query(sql);
+    result = await conn.query(sql, values);
     return callback(result);
   } catch (err) {
 	  throw err;
@@ -25,6 +25,7 @@ async function excuteStatement(sql, callback) {
 	  if (conn) {
       return conn.end()
     };
+    return;
   }
 }
 
