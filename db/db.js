@@ -24,7 +24,6 @@ async function excuteStatement(sql, callback, values) {
 	  throw err;
   } finally {
 	  if (conn) {
-      console.log('finally start');
       return conn.end()
     };
   }
