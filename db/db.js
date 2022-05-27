@@ -15,19 +15,14 @@ const pool = mariadb.createPool({
 async function asyncFunction(sql, callback) {
   let conn;
   let result;
-  console.log('test1')
   try {
 	  conn = await pool.getConnection();
-    console.log('test2');
     result = await conn.query(sql);
-    console.log(result);
-    return result;
+    return callback(result);
   } catch (err) {
 	  throw err;
   } finally {
 	  if (conn) {
-      console.log('test5')
-      console.log(result);
       return conn.end()
     };
   }

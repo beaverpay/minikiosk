@@ -4,11 +4,7 @@ var pool = require('../db/db');
 
 /* GET users listing. */
 router.get('/menuList', function(req, res, next) {
-    console.log('test3')
-    let result = pool('select * from menu');
-    console.log(result);
-    console.log('test4')
-    console.log(result);
+    pool('select * from menu',function(menuList){res.send(menuList);});
 });
 
 router.get('/addMenu', function(req, res, next) {
