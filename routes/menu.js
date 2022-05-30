@@ -2,8 +2,6 @@ let express = require('express');
 let router = express.Router();
 let JSONbig = require('json-bigint');
 let excuteStatement = require('../db/db');
-let keyUtil = require('../util/keyUtil');
-let keyArrays = require('../util/keyArrays');
 let authJWT = require('../middlewares/authJWT');
 
 /*
@@ -12,51 +10,44 @@ json-bigint라이브러리 이용하여 처리
 */
 
 /*메뉴 리스트 조회*/
-router.get('/menuList/:menu_store_id', function (req, res, _next) {
-    if(req.params.menu_store_id === 'all'){
-        excuteStatement('select * from menu').then((result) => {
-            res.send(JSON.parse(JSONbig.stringify(result)));
-        });
+router.get('/menuList/:menu_store_id', async function (req, res, _next) {
+    let result = null;
+    if (req.params.menu_store_id === 'all') {
+        result = await excuteStatement('select * from menu')
+        res.send(result)
     }else{
-        excuteStatement('select * from menu where menu_store_id = ?', [req.params.menu_store_id]).catch(err=>{
-            res.send(`${err}`)
-        }).then((result) => {
-            res.send(JSON.parse(JSONbig.stringify(result)));
-        });
+        await excuteStatement('select * from menu where menu_store_id = ?', [req.params.menu_store_id])
     }
 });
 
 /*메뉴 등록*/
-router.post('/registMenu', authJWT, function (req, res, _next) {
+router.post('/registMenu', authJWT, async function (req, res, _next) {
     let params = req.body;
-    let inputKeyArray = Object.keys(params);
-    let values = null;
-    if (
-        keyUtil.keyCompare(
-            inputKeyArray.length === 4
-                ? keyArrays.registMenuKeys.slice(0, 4)
-                : keyArrays.registMenuKeys,
-            inputKeyArray,
-        )
-    ) {
-        values = [null, ...Object.values(params), 0]; //재고 값이 들어오지 않았을 경우 기본값 0으로 설정
-    } else{
-        throw new Error("키값이 잘못 입력 되었습니다.")
+    let result = null;
+    let values = [null,
+        params.menu_store_id,
+        params.menu_name,
+        params.menu_price,
+        params.menu_desc,
+        params.menu_stock];
+    
+    //menu_stock 값이 들어오지 않으면 default 값으로 처리
+    if (values[values.length - 1] === undefined) { 
+        values[values.length - 1] = 0;
     }
 
-    excuteStatement('insert into menu values(?,?,?,?,?,?)', values).catch(err=>{
-        res.send(`${err}`)
-    }).then(
-        (result) => {
-            res.send(JSON.parse(JSONbig.stringify(result)));
-        },
-    );
+    try {
+        result = await excuteStatement('insert into menu values(?,?,?,?,?,?)', values)
+        res.send(JSON.parse(JSONbig.stringify(result)));
+    } catch (err) { 
+        res.send(err.message);
+    }
 });
 
 /*메뉴 삭제 */
 router.delete('deleteMenu/:menu_id', authJWT, function(req,res, _next){
     console.log(req.params.menu_id);
-    let result =null
+    let result = null
     try{
         //menu_id 가 같고 manager의 store_id와 menu의 menu_store_id 가 같은지 체크
         result = excuteStatement('delete * from menu where menu_id = ? and menu_store_id = ' , [req.params.menu_id])
@@ -66,42 +57,38 @@ router.delete('deleteMenu/:menu_id', authJWT, function(req,res, _next){
     }
 })
 
-/*메뉴 재고 수정*/
-router.put('/changeStock', function (req, res, _next) {
+/*메뉴 재고 수정 : 재고를 입력한 값으로 변경*/ 
+router.put('/changeStock/abs', async function (req, res, _next) {
     let params = req.body;
-    let inputKeyArray = Object.keys(params);
-    let values = null;
-    //재고를 입력한 값으로 변경
-    if (keyUtil.keyCompare(keyArrays.changeStockAbsoluteValueKeys, inputKeyArray)) {
-        values = [...Object.values(params)];
-        excuteStatement(
+    let values = [params.menu_stock, params.id];
+    let result = null;
+    
+    try {
+        result = await excuteStatement(
             'update menu set menu_stock=? where id = ?',
             values
-        ).catch(err=>{
-            res.send(`${err}`)
-        }).then((result) => {
-            res.send(JSON.parse(JSONbig.stringify(result)));
-        })
-    } //재고에 입력한 값을 더해서 저장
-    else if(keyUtil.keyCompare(keyArrays.changeStockRelativeValueKeys, inputKeyArray)){
-        values = [...Object.values(params)];
-        excuteStatement(
-            `update menu set menu_stock = menu_stock + ? where id = ?`,
-            values
-        ).catch(err=>{
-            res.send(`${err}`)
-        }).then((result) => {
-            res.send(JSON.parse(JSONbig.stringify(result)));
-        })
-    }else{
-        throw new Error("키값이 잘못 입력 되었습니다.")
-    }
+        )
+        res.send(JSON.parse(JSONbig.stringify(result)))
+    } catch (err) { 
+        res.send(err.message)
+    }    
 });
 
-/*join 테스트*/
-router.get('/joinTest', async function(_req, res, _next){
-    let result = await excuteStatement('select * from menu join store on menu.menu_store_id = store.store_id')
-    res.send(result)
-})
+/*메뉴 재고 수정 : 원래 재고에 더하고 빼기*/ 
+router.put('/changeStock/rel', async function (req, res, _next) {
+    let params = req.body;
+    let values = [params.menu_stock, params.id];
+    let result = null;
+    
+    try {
+        result = await excuteStatement(
+            'update menu set menu_stock = menu_stock + ? where id = ?',
+            values
+        )
+        res.send(JSON.parse(JSONbig.stringify(result)))
+    } catch (err) { 
+        res.send(err.message)
+    }    
+});
 
 module.exports = router;
