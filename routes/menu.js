@@ -4,11 +4,12 @@ let JSONbig = require('json-bigint');
 let excuteStatement = require('../db/db');
 let keyUtil = require('../util/keyUtil');
 let keyArrays = require('../util/keyArrays');
+let authJWT = require('../middlewares/authJWT');
 
-    /*
-    insert query의 결과 중 insertId가 bigint type 으로 반환 되기 때문에 처리 하지 못하는 문제 발생
-    json-bigint라이브러리 이용하여 처리
-    */
+/*
+insert query의 결과 중 insertId가 bigint type 으로 반환 되기 때문에 처리 하지 못하는 문제 발생
+json-bigint라이브러리 이용하여 처리
+*/
 
 /*메뉴 리스트 조회*/
 router.get('/menuList/:menu_store_id', function (req, res, _next) {
@@ -26,7 +27,7 @@ router.get('/menuList/:menu_store_id', function (req, res, _next) {
 });
 
 /*메뉴 등록*/
-router.post('/registMenu', function (req, res, _next) {
+router.post('/registMenu', authJWT, function (req, res, _next) {
     let params = req.body;
     let inputKeyArray = Object.keys(params);
     let values = null;
@@ -51,6 +52,18 @@ router.post('/registMenu', function (req, res, _next) {
         },
     );
 });
+
+/*메뉴 삭제 */
+router.delete('deleteMenu/:menu_id', authJWT, function(req,res, _next){
+    console.log(req.params.menu_id);
+    let result =null
+    try{
+        result= excuteStatement('delete * from menu where menu_id = ?' , [req.params.menu_id])
+        res.send(result)
+    }catch(err){
+        res.send(err)
+    }
+})
 
 /*메뉴 재고 수정*/
 router.put('/changeStock', function (req, res, _next) {

@@ -18,12 +18,10 @@ async function excuteStatement(sql, values) {
     let result;
     try {
         conn = await pool.getConnection();
-        result = await conn.query(sql, values).catch(err => { 
-            throw new Error(err);
-        })
+        result = await conn.query(sql, values)
         return result;
     } catch (err) {
-        throw err;
+        throw new Error(err);
     } finally {
         if (conn) {
             conn.end();
