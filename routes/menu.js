@@ -22,6 +22,9 @@ router.get('/menuList/:menu_store_id', async function (req, res, _next) {
 
 /*메뉴 등록*/
 router.post('/registMenu', authJWT, async function (req, res, _next) {
+    let store_id = req.store_id;
+    let role = req.role;
+
     let params = req.body;
     let result = null;
     let values = [null,
@@ -31,29 +34,32 @@ router.post('/registMenu', authJWT, async function (req, res, _next) {
         params.menu_desc,
         params.menu_stock];
     
-    //menu_stock 값이 들어오지 않으면 default 값으로 처리
-    if (values[values.length - 1] === undefined) { 
-        values[values.length - 1] = 0;
-    }
-
     try {
-        result = await excuteStatement('insert into menu values(?,?,?,?,?,?)', values)
-        res.send(JSON.parse(JSONbig.stringify(result)));
+        if (store_id === params.menu_store_id || role === 'admin') {
+            //menu_stock 값이 들어오지 않으면 default 값으로 처리
+            if (values[values.length - 1] === undefined) { 
+                values[values.length - 1] = 0;
+            }
+
+            result = await excuteStatement('insert into menu values(?,?,?,?,?,?)', values)
+            res.send(JSON.parse(JSONbig.stringify(result)));
+        } else { 
+            throw new Error('권한이 없습니다.')
+        }
     } catch (err) { 
         res.send(err.message);
     }
 });
 
 /*메뉴 삭제 */
-router.delete('deleteMenu/:menu_id', authJWT, function(req,res, _next){
-    console.log(req.params.menu_id);
+router.delete('deleteMenu/:menu_id', authJWT, async function(req,res, _next){
     let result = null
     try{
         //menu_id 가 같고 manager의 store_id와 menu의 menu_store_id 가 같은지 체크
-        result = excuteStatement('delete * from menu where menu_id = ? and menu_store_id = ' , [req.params.menu_id])
+        result = await excuteStatement('delete * from menu where menu_id = ? and menu_store_id = ' , [req.params.menu_id])
         res.send(result)
     }catch(err){
-        res.send(err)
+        res.send(err.message)
     }
 })
 
@@ -65,7 +71,7 @@ router.put('/changeStock/abs', async function (req, res, _next) {
     
     try {
         result = await excuteStatement(
-            'update menu set menu_stock=? where id = ?',
+            'update menu set menu_stock = ? where id = ?',
             values
         )
         res.send(JSON.parse(JSONbig.stringify(result)))
