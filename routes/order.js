@@ -3,6 +3,10 @@ let router = express.Router();
 let JSONbig = require('json-bigint');
 let excuteStatement = require('../db/db');
 
+// router.get('/orderList', function(_req, res, _next) {
+//   excuteStatement('SELECT orders.id, menu.menu_name, menu.menu_price, orders.order_amount, orders.order_amount * menu.menu_price AS order_total FROM education.orders LEFT JOIN education.menu ON orders.menu_id=menu.id',async function(orderList){
+//     await res.json(JSON.parse(JSONbig.stringify(orderList)));
+//   });
 router.get('/orderList', async function(req, res, next) {
   let result = await excuteStatement('select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from education.orders left join education.menu on orders.menu_id=menu.id')
   res.send(JSON.parse(JSONbig.stringify(result)))

@@ -26,7 +26,6 @@ const authJWT = (req, res, next) => {
       ok: false,
       message: '토큰이 존재하지 않습니다.', // jwt가 만료되었다면 메세지는 'jwt expired'입니다.
     });
-    console.log('check');
   }
 };
 
