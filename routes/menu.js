@@ -5,9 +5,14 @@ let excuteStatement = require('../db/db');
 let keyUtil = require('../util/keyUtil');
 let keyArrays = require('../util/keyArrays');
 
+    /*
+    insert query의 결과 중 insertId가 bigint type 으로 반환 되기 때문에 처리 하지 못하는 문제 발생
+    json-bigint라이브러리 이용하여 처리
+    */
+
 /*메뉴 리스트 조회*/
 router.get('/menuList/:menu_store_id', function (req, res, _next) {
-    if(req.params.menu_store_id ){
+    if(req.params.menu_store_id === 'all'){
         excuteStatement('select * from menu').then((result) => {
             res.send(JSON.parse(JSONbig.stringify(result)));
         });
@@ -38,10 +43,6 @@ router.post('/registMenu', function (req, res, _next) {
         throw new Error("키값이 잘못 입력 되었습니다.")
     }
 
-    /*
-    insert query의 결과 중 insertId가 bigint type 으로 반환 되기 때문에 처리 하지 못하는 문제 발생
-    json-bigint라이브러리 이용하여 처리
-    */
     excuteStatement('insert into menu values(?,?,?,?,?,?)', values).catch(err=>{
         res.send(`${err}`)
     }).then(
