@@ -58,7 +58,8 @@ router.delete('deleteMenu/:menu_id', authJWT, function(req,res, _next){
     console.log(req.params.menu_id);
     let result =null
     try{
-        result= excuteStatement('delete * from menu where menu_id = ?' , [req.params.menu_id])
+        //menu_id 가 같고 manager의 store_id와 menu의 menu_store_id 가 같은지 체크
+        result = excuteStatement('delete * from menu where menu_id = ? and menu_store_id = ' , [req.params.menu_id])
         res.send(result)
     }catch(err){
         res.send(err)
