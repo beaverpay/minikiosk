@@ -1,9 +1,11 @@
 exports.registMenuKeys = [
-    'store_id',
+    'menu_store_id',
     'menu_name',
     'menu_price',
     'menu_desc',
     'menu_stock',
 ];
 
-exports.changeStockKeys = ['menu_stock', 'menu_id'];
+
+exports.changeStockAbsoluteValueKeys = ['menu_stock', 'id'];
+exports.changeStockRelativeValueKeys = ['inc_dec_value', 'id'];
