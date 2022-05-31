@@ -37,7 +37,6 @@ router.delete('/delete/:user_store_id', authJWT, async function(req, res, _next)
 
   try{
     if(store_id === 1 && role === 'admin'){
-      console.log(req.params.user_store_id);
       result = await excuteStatement('delete from user where user_store_id = ?', [req.params.user_store_id])
       res.status(200).send({
         ok: true,

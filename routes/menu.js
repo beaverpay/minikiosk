@@ -59,8 +59,7 @@ router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _ne
 
     try {
         if (store_id === parseInt(req.params.menu_store_id) || role === 'admin') {
-            //menu_stock 값이 들어오지 않으면 default 값으로 처리
-            console.log('start');
+            //menu_stock 값이 들어오지 않으면 0으로 처리
             if (values[values.length - 1] === undefined) { 
                 values = [...values, 0];
             }

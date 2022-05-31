@@ -4,6 +4,7 @@ let excuteStatement = require('../db/db');
 const jwt = require('../util/jwtUtil');
 const bcrypt = require('bcrypt');
 
+//매장 아이디와 비밀번호를 받아 토큰 반환
 router.post('/', async function(req, res, _next) {
     let store_id = req.body.user_store_id;
     let password = req.body.user_password;
