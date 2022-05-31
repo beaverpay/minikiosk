@@ -13,7 +13,7 @@ json-bigint라이브러리 이용하여 처리
 /*
 전체 혹은 일부 매장의 메뉴 리스트 조회
 */
-router.get('/menuList/:menu_store_id', async function (req, res, _next) {
+router.get('/:menu_store_id', async function (req, res, _next) {
     let result = null;
     let sql = null;
 
@@ -42,11 +42,11 @@ router.get('/menuList/:menu_store_id', async function (req, res, _next) {
 매장의 매니저 혹은 전체 관리자로부터 매장 id(pathString)와
 메뉴 정보(json)를 입력받아 등록
 */
-router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _next) {
+router.post('/regist/:menu_store_id', authJWT, async function (req, res, _next) {
     let sql = 'insert into menu values(?,?,?,?,?,?)'
     let store_id = req.store_id;
     let role = req.role;
-    let params = req.body;
+    const params = req.body;
     let values = [
         null,
         req.params.menu_store_id,
@@ -72,7 +72,6 @@ router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _ne
             throw new Error('권한이 없습니다.');
         }
     } catch (err) { 
-        console.log(err.message);
         res.status(401).send({
             ok:false,
             message: err.message
@@ -85,7 +84,7 @@ router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _ne
 매장의 매니저 혹은 전체 관리자 기능
 메뉴 아이디를 입력받아 해당 메뉴를 제거
 */
-router.delete('/deleteMenu/:id', authJWT, async function(req,res, _next){
+router.delete('/delete/:id', authJWT, async function(req,res, _next){
     let sql = 'delete from menu where id = ?';
     let store_id = req.store_id;
     let role = req.role;
@@ -113,7 +112,7 @@ router.delete('/deleteMenu/:id', authJWT, async function(req,res, _next){
 })
 
 /*메뉴 재고 수정 : 재고를 입력한 값으로 변경*/ 
-router.put('/changeStock/abs', async function (req, res, _next) {
+router.put('/stock/abs', async function (req, res, _next) {
     let sql = 'update menu set menu_stock = ? where id = ?';
     let params = req.body;
     let values = [params.menu_stock, params.id];
@@ -133,7 +132,7 @@ router.put('/changeStock/abs', async function (req, res, _next) {
 });
 
 /*메뉴 재고 수정 : 원래 재고에 더하고 빼기*/ 
-router.put('/changeStock/rel', async function (req, res, _next) {
+router.put('/stock/rel', async function (req, res, _next) {
     let sql = 'update menu set menu_stock = menu_stock + ? where id = ?';
     let params = req.body;
     let values = [params.menu_stock, params.id];
