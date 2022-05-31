@@ -1,6 +1,6 @@
 const mariadb = require('mariadb');
 const config = require('../config/db-config.json');
-let JSONbig = require('json-bigint');
+const JSONbig = require('json-bigint');
 
 //파라미터 json이 아니라 객체인듯 참고하세요
 const pool = mariadb.createPool({
@@ -18,16 +18,10 @@ async function excuteStatement(sql, values) {
     let result;
     try {
         conn = await pool.getConnection();
-        result = await conn.query(sql, values).catch(err => { 
-            console.log('=========query error============');
-            console.log(err);
-            throw new Error(err);
-        })
+        result = await conn.query(sql, values)
         return result;
     } catch (err) {
-        console.log('=========excuteStatment error============');
-        console.log(err);
-        throw err;
+        throw new Error(err);
     } finally {
         if (conn) {
             conn.end();
