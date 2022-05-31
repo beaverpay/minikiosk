@@ -22,9 +22,7 @@ router.get('/orders', async (req, res, next) => {
 router.post('/regist', async (req, res, next) => {
   const params = req.body;
   const paramArray = Object.values(params);
-  //order insert
   const values = [null, ...paramArray]; 
-  //menu update
   const values1 = [];
 try{
   const idExists = await excuteStatement(
@@ -32,8 +30,8 @@ try{
   const stockCnt = await excuteStatement(
     'select menu_stock from menu where id = ?', [params.menu_id]);
 
-  values.push(values[2]); //get order_amount value
-  values.push(values[1]); //get menu_id value
+  values.push(values[2]); 
+  values.push(values[1]); 
 
 if(idExists[0].A > 0 && stockCnt[0].menu_stock !== 0){
   excuteStatement('insert into orders(id, menu_id, order_amount, order_total) values (?,?,?,( select menu_price * ? from menu where id = ? ) )', values).catch(err=>{
@@ -48,7 +46,10 @@ if(idExists[0].A > 0 && stockCnt[0].menu_stock !== 0){
         res.send(`${err}`)
       }).then(
         (result) => {
-          res.send(JSON.parse(JSONbig.stringify(result)));
+          res.status(201).send({
+            ok: true,
+            data: JSON.parse(JSONbig.stringify(result))
+        })
         },
       );
     },
