@@ -1,28 +1,36 @@
-let express = require('express');
-let router = express.Router();
-let JSONbig = require('json-bigint');
-let excuteStatement = require('../db/db');
+const express = require('express');
+const router = express.Router();
+const JSONbig = require('json-bigint');
+const excuteStatement = require('../db/db');
 
-router.get('/orderList', async function(req, res, next) {
+router.get('/orders', async function(req, res, next) {
   try {
     result = await excuteStatement(
       'select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from education.orders left join education.menu on orders.menu_id=menu.id')
-      res.send(JSON.parse(JSONbig.stringify(result)))
+    res.status(200).send({
+        ok: true,
+        data: JSON.parse(JSONbig.stringify(result))
+    })
   } catch (err) { 
-        res.send(err.message)
+    res.status(401).send({
+      ok:false,
+      message: err.message
+    });
     }  
 });
 
-router.post('/registOrder', async function(req, res, next) {
-  let params = req.body;
-  let paramArray = Object.values(params);
+router.post('/regist', async function(req, res, next) {
+  const params = req.body;
+  const paramArray = Object.values(params);
   //order insert
-  let values = [null, ...paramArray]; 
+  const values = [null, ...paramArray]; 
   //menu update
-  let values1 = [];
-
-  let idExists = await excuteStatement('SELECT EXISTS ( select id from menu where id = ? ) AS A ', [params.menu_id]);
-  let stockCnt = await excuteStatement('select menu_stock from menu where id = ?', [params.menu_id]);
+  const values1 = [];
+try{
+  const idExists = await excuteStatement(
+    'SELECT EXISTS ( select id from menu where id = ? ) AS A ', [params.menu_id]);
+  const stockCnt = await excuteStatement(
+    'select menu_stock from menu where id = ?', [params.menu_id]);
 
   values.push(values[2]); //get order_amount value
   values.push(values[1]); //get menu_id value
@@ -55,7 +63,13 @@ else if(stockCnt[0].menu_stock === 0){
 else{
   res.send("주문 실패")
 }
-
+} catch (err) { 
+  console.log(err.message);
+  res.status(401).send({
+      ok:false,
+      message: err.message
+  });
+}
 });
 
 

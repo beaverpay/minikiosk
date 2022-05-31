@@ -1,6 +1,6 @@
 const mariadb = require('mariadb');
 const config = require('../config/db-config.json');
-let JSONbig = require('json-bigint');
+const JSONbig = require('json-bigint');
 
 //파라미터 json이 아니라 객체인듯 참고하세요
 const pool = mariadb.createPool({
