@@ -5,21 +5,44 @@ let excuteStatement = require('../db/db');
 const bcrypt = require('bcrypt');
 let JSONbig = require('json-bigint');
 
-/* admin 토큰인증 후 매니저 생성 */
+/* admin 토큰 인증 후 매니저 생성 */
 router.post('/create', authJWT, async function(req, res, _next) {
   let store_id = req.store_id;
   let role = req.role;
   let password = await bcrypt.hashSync(req.body.user_password, 10);
   let result = null;
-
   try{
-    if(store_id === 0 && role === 'admin'){
+    if(store_id === 1 && role === 'admin'){
       result = await excuteStatement('insert into user values(?,?,?,?)', [null, password, 'manager', req.body.user_store_id])
       res.status(200).send({
         ok: true,
         data: JSON.parse(JSONbig.stringify(result))
     })
     }else{
+      throw new Error('권한이 없습니다.')
+    }
+  }catch(err){
+    res.status(401).send({
+      ok:false,
+      message: err.message
+    });
+  }
+});
+
+/* admin 토큰 인증 후 매니저 삭제 */
+router.delete('/delete/:user_store_id', authJWT, async function(req, res, _next){
+  let store_id = req.store_id;
+  let role = req.role;
+  let result = null;
+
+  try{
+    if(store_id === 1 && role === 'admin'){
+      console.log(req.params.user_store_id);
+      result = await excuteStatement('delete from user where user_store_id = ?', [req.params.user_store_id])
+      res.status(200).send({
+        ok: true,
+        data: JSON.parse(JSONbig.stringify(result))
+    })}else{
       throw new Error('권한이 없습니다.')
     }
   }catch(err){
