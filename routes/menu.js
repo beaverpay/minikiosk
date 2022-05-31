@@ -47,7 +47,6 @@ router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _ne
     let store_id = req.store_id;
     let role = req.role;
     let params = req.body;
-    let result = null;
     let values = [
         null,
         req.params.menu_store_id,
@@ -59,13 +58,12 @@ router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _ne
 
     try {
         if (store_id === parseInt(req.params.menu_store_id) || role === 'admin') {
-            //menu_stock 값이 들어오지 않으면 default 값으로 처리
-            console.log('start');
+            //menu_stock 값이 들어오지 않으면 0으로 처리
             if (values[values.length - 1] === undefined) { 
-                values = [...values, 0];
+                values[values.length - 1] = 0;
             }
 
-            result = await excuteStatement(sql , values)
+            let result = await excuteStatement(sql , values)
             res.status(200).send({
                 ok: true,
                 data: JSON.parse(JSONbig.stringify(result))
@@ -92,14 +90,13 @@ router.delete('/deleteMenu/:id', authJWT, async function(req,res, _next){
     let store_id = req.store_id;
     let role = req.role;
     let menu_store_id = null;
-    let result = null;
 
     try{
         menu_store_id = await excuteStatement('select menu_store_id from menu where id = ?' , [req.params.id])
         menu_store_id = menu_store_id[0].menu_store_id;
         //해당 매장의 매니저이거나 관리자이면
         if (store_id === menu_store_id || role === 'admin') {
-            result = await excuteStatement(sql , [req.params.id])
+            let result = await excuteStatement(sql , [req.params.id])
             res.status(200).send({
                 ok: true,
                 data: JSON.parse(JSONbig.stringify(result))
@@ -120,10 +117,9 @@ router.put('/changeStock/abs', async function (req, res, _next) {
     let sql = 'update menu set menu_stock = ? where id = ?';
     let params = req.body;
     let values = [params.menu_stock, params.id];
-    let result = null;
     
     try {
-        result = await excuteStatement(sql, values)
+        let result = await excuteStatement(sql, values)
         res.status(200).send({
             ok: true,
             data: JSON.parse(JSONbig.stringify(result))
@@ -141,10 +137,9 @@ router.put('/changeStock/rel', async function (req, res, _next) {
     let sql = 'update menu set menu_stock = menu_stock + ? where id = ?';
     let params = req.body;
     let values = [params.menu_stock, params.id];
-    let result = null;
     
     try {
-        result = await excuteStatement(sql, values)
+        let result = await excuteStatement(sql, values)
         res.status(200).send({
             ok: true,
             data: JSON.parse(JSONbig.stringify(result))
