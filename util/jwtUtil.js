@@ -3,7 +3,7 @@ const secret = require('../config/jwt-secret.json').secret;
 
 
 module.exports = {
-  sign: (user) => { // access token 발급
+  sign: function(user){ // access token 발급
     const payload = { // access token에 들어갈 payload
       id: user.id,
       role: user.role,
@@ -14,7 +14,7 @@ module.exports = {
       expiresIn: '1h', 	  // 유효기간
     });
   },
-  verify: (token) => { // access token 검증
+  verify: function(token){ // access token 검증
     let decoded = null;
     try {
       decoded = jwt.verify(token, secret);

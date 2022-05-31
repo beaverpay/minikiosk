@@ -9,7 +9,6 @@ router.post('/', async function(req, res, _next) {
     let password = req.body.user_password;
     let managerInfo = null;
     
-    //에러 처리한거 같은데 죽는 현상
     try {
         managerInfo = await excuteStatement('select user_password,user_role from user where user_store_id = ?', [store_id])
         if (!managerInfo[0]) { 
