@@ -1,8 +1,0 @@
-{
-    "host": "paycoq.cc5455ow6swr.ap-northeast-2.rds.amazonaws.com", 
-    "port": 3306,
-    "user": "admin",
-    "password": "00000000",
-    "database": "education",
-    "connectionLimit": 5
-}
