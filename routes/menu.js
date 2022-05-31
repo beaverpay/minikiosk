@@ -12,82 +12,141 @@ json-bigint라이브러리 이용하여 처리
 /*메뉴 리스트 조회*/
 router.get('/menuList/:menu_store_id', async function (req, res, _next) {
     let result = null;
+    let sql = null;
+
     if (req.params.menu_store_id === 'all') {
-        result = await excuteStatement('select * from menu')
-        res.send(result)
+        sql = 'select * from menu';
     }else{
-        await excuteStatement('select * from menu where menu_store_id = ?', [req.params.menu_store_id])
+        sql = 'select * from menu where menu_store_id = ?';
+    }
+
+    try{
+        result = await excuteStatement(sql, [req.params.menu_store_id])
+        res.status(200).send({
+            ok: true,
+            data: {result}
+        })
+    }catch(err){
+        res.status(401).send({
+            ok:false,
+            message: err.message
+        });
     }
 });
 
 /*메뉴 등록*/
-router.post('/registMenu', authJWT, async function (req, res, _next) {
+router.post('/registMenu/:menu_store_id', authJWT, async function (req, res, _next) {
+    let sql = 'insert into menu values(?,?,?,?,?,?)'
+    let store_id = req.store_id;
+    let role = req.role;
     let params = req.body;
     let result = null;
     let values = [null,
-        params.menu_store_id,
+        req.params.menu_store_id,
         params.menu_name,
         params.menu_price,
         params.menu_desc,
         params.menu_stock];
-    
-    //menu_stock 값이 들어오지 않으면 default 값으로 처리
-    if (values[values.length - 1] === undefined) { 
-        values[values.length - 1] = 0;
-    }
 
     try {
-        result = await excuteStatement('insert into menu values(?,?,?,?,?,?)', values)
-        res.send(JSON.parse(JSONbig.stringify(result)));
+        if (store_id === parseInt(req.params.menu_store_id) || role === 'admin') {
+            //menu_stock 값이 들어오지 않으면 default 값으로 처리
+            console.log('start');
+            if (values[values.length - 1] === undefined) { 
+                values[values.length - 1] = 0;
+            }
+
+            result = await excuteStatement(sql , values)
+            res.status(200).send({
+                ok: true,
+                data: JSON.parse(JSONbig.stringify(result))
+            })
+        } else { 
+            throw new Error('권한이 없습니다.');
+        }
     } catch (err) { 
-        res.send(err.message);
+        console.log(err.message);
+        res.status(401).send({
+            ok:false,
+            message: err.message
+        });
     }
 });
 
 /*메뉴 삭제 */
-router.delete('deleteMenu/:menu_id', authJWT, function(req,res, _next){
-    console.log(req.params.menu_id);
-    let result = null
+router.delete('/deleteMenu/:id', authJWT, async function(req,res, _next){
+    let sql = 'delete from menu where id = ?';
+    let store_id = req.store_id;
+    let role = req.role;
+    let menu_store_id = null;
+    let result = null;
+
     try{
-        //menu_id 가 같고 manager의 store_id와 menu의 menu_store_id 가 같은지 체크
-        result = excuteStatement('delete * from menu where menu_id = ? and menu_store_id = ' , [req.params.menu_id])
-        res.send(result)
+        menu_store_id = await excuteStatement('select menu_store_id from menu where id = ?' , [req.params.id])
+        menu_store_id = menu_store_id[0].menu_store_id;
+        //해당 매장의 매니저이거나 관리자이면
+        if (store_id === menu_store_id || role === 'admin') {
+            result = await excuteStatement(sql , [req.params.id])
+            res.status(200).send({
+                ok: true,
+                data: JSON.parse(JSONbig.stringify(result))
+            })
+        }else {
+            throw new Error('권한이 없습니다.');
+        }
     }catch(err){
-        res.send(err)
+        res.status(401).send({
+            ok:false,
+            message: err.message
+        });
     }
 })
 
 /*메뉴 재고 수정 : 재고를 입력한 값으로 변경*/ 
 router.put('/changeStock/abs', async function (req, res, _next) {
+    let sql = 'update menu set menu_stock = ? where id = ?';
     let params = req.body;
     let values = [params.menu_stock, params.id];
     let result = null;
     
     try {
         result = await excuteStatement(
-            'update menu set menu_stock=? where id = ?',
+            sql ,
             values
         )
-        res.send(JSON.parse(JSONbig.stringify(result)))
+        res.status(200).send({
+            ok: true,
+            data: JSON.parse(JSONbig.stringify(result))
+        })
     } catch (err) { 
-        res.send(err.message)
+        res.status(401).send({
+            ok:false,
+            message: err.message
+        });
     }    
 });
 
 /*메뉴 재고 수정 : 원래 재고에 더하고 빼기*/ 
 router.put('/changeStock/rel', async function (req, res, _next) {
+    let sql = 'update menu set menu_stock = menu_stock + ? where id = ?';
     let params = req.body;
     let values = [params.menu_stock, params.id];
     let result = null;
     
     try {
         result = await excuteStatement(
-            'update menu set menu_stock = menu_stock + ? where id = ?',
+            sql,
             values
         )
-        res.send(JSON.parse(JSONbig.stringify(result)))
+        res.status(200).send({
+            ok: true,
+            data: JSON.parse(JSONbig.stringify(result))
+        })
     } catch (err) { 
-        res.send(err.message)
+        res.status(401).send({
+            ok:false,
+            message: err.message
+        });
     }    
 });
 
