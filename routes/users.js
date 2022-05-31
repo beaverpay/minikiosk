@@ -1,18 +1,20 @@
-var express = require('express');
-var router = express.Router();
-let authJWT = require('../middlewares/authJWT');
-let excuteStatement = require('../db/db');
+const express = require('express');
+const authJWT = require('../middlewares/authJWT');
+const excuteStatement = require('../db/db');
+const router = express.Router();
 const bcrypt = require('bcrypt');
-let JSONbig = require('json-bigint');
+const JSONbig = require('json-bigint');
 
 /* admin 토큰 인증 후 매니저 생성 */
-router.post('/create', authJWT, async function(req, res, _next) {
-  let store_id = req.store_id;
-  let role = req.role;
-  let password = await bcrypt.hashSync(req.body.user_password, 10);
+router.post('/', authJWT, async (req, res, _next) => {
+  const store_id = req.store_id;
+  const role = req.role;
+  const params = req.body
+  const password = await bcrypt.hashSync(params.user_password, 10);
+  const values = [null, password, 'manager', params.user_store_id]
   try{
     if(store_id === 1 && role === 'admin'){
-      let result = await excuteStatement('insert into user values(?,?,?,?)', [null, password, 'manager', req.body.user_store_id])
+      const result = await excuteStatement('insert into user values(?,?,?,?)', values)
       res.status(200).send({
         ok: true,
         data: JSON.parse(JSONbig.stringify(result))
@@ -29,13 +31,13 @@ router.post('/create', authJWT, async function(req, res, _next) {
 });
 
 /* admin 토큰 인증 후 매니저 삭제 */
-router.delete('/delete/:user_store_id', authJWT, async function(req, res, _next){
-  let store_id = req.store_id;
-  let role = req.role;
+router.delete('/:user_store_id', authJWT, async (req, res, _next) => {
+  const store_id = req.store_id;
+  const role = req.role;
 
   try{
     if(store_id === 1 && role === 'admin'){
-      let result = await excuteStatement('delete from user where user_store_id = ?', [req.params.user_store_id])
+      const result = await excuteStatement('delete from user where user_store_id = ?', [req.params.user_store_id])
       if(result.affectedRows > 0){
         res.status(200).send({
           ok: true,

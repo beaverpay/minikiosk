@@ -1,24 +1,17 @@
 const mariadb = require('mariadb');
-const config = require('../config/db-config.json');
-const JSONbig = require('json-bigint');
+const config = require('../config/db-config');
+const dbConfig = JSON.parse((JSON.stringify(config)))
 
-//파라미터 json이 아니라 객체인듯 참고하세요
-const pool = mariadb.createPool({
-    host: config.host,
-    port: config.port,
-    user: config.user,
-    password: config.password,
-    database: config.database,
-    connectionLimit: config.connectionLimit,
-});
+const pool = mariadb.createPool(
+    dbConfig
+);
 
 //커넥션 풀로부터 connection을 하나 얻어 쿼리를 보내고 connection을 반환 한다.
-async function excuteStatement(sql, values) {
-    let conn;
-    let result;
+const excuteStatement = async (sql, values) => {
+    let conn = null;
     try {
         conn = await pool.getConnection();
-        result = await conn.query(sql, values)
+        const result = await conn.query(sql, values)
         return result;
     } catch (err) {
         throw new Error(err);

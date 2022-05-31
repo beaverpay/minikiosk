@@ -1,9 +1,9 @@
 const express = require('express');
-const router = express.Router();
-const JSONbig = require('json-bigint');
 const excuteStatement = require('../db/db');
+const JSONbig = require('json-bigint');
+const router = express.Router();
 
-router.get('/orders', async function(req, res, next) {
+router.get('/orders', async (req, res, next) => {
   try {
     result = await excuteStatement(
       'select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from education.orders left join education.menu on orders.menu_id=menu.id')
@@ -19,7 +19,7 @@ router.get('/orders', async function(req, res, next) {
     }  
 });
 
-router.post('/regist', async function(req, res, next) {
+router.post('/regist', async (req, res, next) => {
   const params = req.body;
   const paramArray = Object.values(params);
   //order insert
