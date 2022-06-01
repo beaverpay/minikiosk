@@ -32,4 +32,50 @@ router.delete('/:id', authJWT, menuController.delete);
 /*메뉴 재고 수정 : abs 재고를 입력한 값으로 변경 / rel 원래 재고에 더하고 빼기*/
 router.put('/stock/:method', menuController.update);
 
+
+
+/*메뉴 검색: 메뉴명 */ 
+router.post('/search/name', async function (req, res, _next) {
+    let params = req.body;
+    const values = [params.menu_store_id, "%"+params.menu_name+"%"];
+
+        if (params.menu_store_id === 'all') {
+            result = await excuteStatement(
+                "select * from menu where menu_name like ? ", "%" + params.menu_name+ "%")
+                res.status(200).send({
+                    ok: true,
+                    data: {result}
+                })
+        }else{
+            result = await excuteStatement(
+                "select * from menu where menu_store_id = ? and  menu_name like ? ", values)      
+                res.status(200).send({
+                    ok: true,
+                    data: {result}
+                })
+        }
+});
+
+/*메뉴 검색: 카테고리*/ 
+router.post('/search/category', async function (req, res, _next) {
+    let params = req.body;
+    const values = [params.menu_store_id, "%"+params.menu_category+"%"];
+
+        if (params.menu_store_id === 'all') {
+            result = await excuteStatement(
+                "select * from menu where menu_category like ? ", "%" + params.menu_category+ "%")
+                res.status(200).send({
+                    ok: true,
+                    data: {result}
+                })
+        }else{
+            result = await excuteStatement(
+                "select * from menu where menu_store_id = ? and  menu_category like ? ", values)      
+                res.status(200).send({
+                    ok: true,
+                    data: {result}
+                })
+        }
+});
+
 module.exports = router;
