@@ -32,8 +32,6 @@ router.delete('/:id', authJWT, menuController.delete);
 /*메뉴 재고 수정 : abs 재고를 입력한 값으로 변경 / rel 원래 재고에 더하고 빼기*/
 router.put('/stock/:method', menuController.update);
 
-
-
 /*메뉴 검색: 메뉴명 */ 
 router.post('/search/name', menuController.name);
 
