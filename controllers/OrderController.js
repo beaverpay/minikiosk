@@ -56,13 +56,22 @@ module.exports = {
     );
   }
   else if(idExists[0].A === 0){
-    res.send("메뉴가 존재하지 않습니다.")
+		res.status(401).send({
+			ok:false,
+			message: "메뉴가 존재하지 않습니다."
+	});
   }
   else if(stockCnt[0].menu_stock === 0){
-    res.send("재고가 부족합니다.")
+		res.status(401).send({
+			ok:false,
+			message: "재고가 부족합니다."
+	});
   }
   else{
-    res.send("주문 실패")
+		res.status(401).send({
+			ok:false,
+			message: "주문 실패"
+	});
   }
   } catch (err) { 
     console.log(err.message);
