@@ -1,6 +1,4 @@
 const express = require('express');
-const excuteStatement = require('../db/db');
-const JSONbig = require('json-bigint');
 const OrderController = require('../controllers/OrderController');
 const router = express.Router();
 

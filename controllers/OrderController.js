@@ -5,7 +5,7 @@ module.exports = {
     search: async (req, res, next) => {
         try {
             result = await excuteStatement(
-                'select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from orders left join menu on orders.menu_id=menu.id')
+                'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id')
                 res.status(200).send({
                     ok: true,
                     data: JSON.parse(JSONbig.stringify(result))
@@ -56,13 +56,22 @@ module.exports = {
     );
   }
   else if(idExists[0].A === 0){
-    res.send("메뉴가 존재하지 않습니다.")
+		res.status(401).send({
+			ok:false,
+			message: "메뉴가 존재하지 않습니다."
+	});
   }
   else if(stockCnt[0].menu_stock === 0){
-    res.send("재고가 부족합니다.")
+		res.status(401).send({
+			ok:false,
+			message: "재고가 부족합니다."
+	});
   }
   else{
-    res.send("주문 실패")
+		res.status(401).send({
+			ok:false,
+			message: "주문 실패"
+	});
   }
   } catch (err) { 
     console.log(err.message);
