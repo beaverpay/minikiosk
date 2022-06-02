@@ -4,17 +4,17 @@ const bcrypt = require('bcrypt');
 
 module.exports = {
     login : async (req, res, _next) => {
-        const {store_id, password} = req.body
+        const {user_store_id, user_password} = req.body
     
         try {
             const managerInfo = await excuteStatement('select user_password,user_role from user where user_store_id = ?', [
-                store_id,
+                user_store_id,
             ]);
             if (!managerInfo[0]) {
                 throw new Error('없는 매장 입니다.');
             }
-            if (await bcrypt.compareSync(password, managerInfo[0].user_password)) {
-                let user = { id: store_id, role: managerInfo[0].user_role };
+            if (await bcrypt.compareSync(user_password, managerInfo[0].user_password)) {
+                let user = { id: user_store_id, role: managerInfo[0].user_role };
                 const accessToken = jwt.sign(user);
                 res.status(200).send({
                     // client에게 토큰을 반환합니다.

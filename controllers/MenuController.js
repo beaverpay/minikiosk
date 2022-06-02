@@ -22,11 +22,11 @@ module.exports = {
 	},
 	regist: async (req, res, _next) => {
 		const sql = 'insert into menu values(?,?,?,?,?,?)';
+		console.log(req);
 		const { store_id, role } = req;
 		const { menu_name, menu_price, menu_desc, menu_stock } = req.body;
 		const { menu_store_id } = req.params;
 		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_stock ?? 0];
-
 		try {
 			if (store_id === parseInt(req.params.menu_store_id) || role === 'admin') {
 				const result = await excuteStatement(sql, values);
