@@ -3,7 +3,7 @@ const jwt = require('../util/jwtUtil');
 const bcrypt = require('bcrypt');
 
 module.exports = {
-    login : async (req, res, _next) => {
+    login : async (req, res, next) => {
         const {user_store_id, user_password} = req.body
     
         try {
@@ -11,7 +11,9 @@ module.exports = {
                 user_store_id,
             ]);
             if (!managerInfo[0]) {
-                throw new Error('없는 매장 입니다.');
+                const err = new Error('없는 매장입니다.');
+                err.status = 400;
+                throw err;
             }
             if (await bcrypt.compareSync(user_password, managerInfo[0].user_password)) {
                 let user = { id: managerInfo[0].user_store_id, role: managerInfo[0].user_role };
@@ -24,15 +26,15 @@ module.exports = {
                     },
                 });
             } else {
-                res.status(401).send({
-                    ok: false,
-                    message: '틀린 비밀번호 입니다.',
-                });
+                const err = new Error('틀린 비밀번호 입니다.');
+                err.status = 401;
+                throw err;
             }
         } catch (err) {
-            res.status(500).send({
+            errMessage = err.status ? err.message : '알 수 없는 에러';
+            res.status(err.status ?? 500).send({
                 ok: false,
-                message: err.message,
+                message: errMessage,
             });
         }
     }
