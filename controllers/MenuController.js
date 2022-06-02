@@ -72,12 +72,13 @@ module.exports = {
 	update: async (req, res, _next) => {
 		let sql = null;
 		const { menu_stock, id } = req.body;
-		const values = [menu_stock, id];
+		const { method } = req.params;
+		const values = [ menu_stock, id ];
 
 		try {
-			if (req.params.method === 'abs') {
+			if (method === 'abs') {
 				sql = 'update menu set menu_stock = ? where id = ?';
-			} else if (req.params.method === 'rel') {
+			} else if (method === 'rel') {
 				sql = 'update menu set menu_stock = menu_stock + ? where id = ?';
 			} else {
 				throw new Error('url에 마지막에 abs or rel 를 입력해 주세요');
@@ -95,29 +96,19 @@ module.exports = {
 			});
 		}
 	},
-
 	name: async (req, res, _next) => {
-		const params = req.body;
-		let all = 'select * from menu where menu_name like ?';
-		let sep = 'select * from menu where menu_store_id = ? and  menu_name like ?';
-		const values = [params.menu_store_id, "%"+params.menu_name+"%"];
+		const {menu_store_id, menu_name} = req.body.params;
+		const all = 'select * from menu where menu_name like ?';
+		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
+		const sql = menu_store_id === 'all' ? all : sep;
+		const values = menu_store_id === 'all' ? [menu_store_id] : [menu_store_id, "%" + menu_name + "%"];
 	
 		try{
-			if (params.menu_store_id === 'all') {
-				result = await excuteStatement(
-					all, "%" + params.menu_name+ "%")
-					res.status(200).send({
-						ok: true,
-						data: {result}
-					})
-			}else{
-				result = await excuteStatement(
-					sep, values)      
-					res.status(200).send({
-						ok: true,
-						data: {result}
-					})
-			}
+			result = await excuteStatement(sql, values)
+			res.status(200).send({
+				ok: true,
+				data: {result}
+			})
 		}
 		catch (err) {
 			res.status(401).send({
@@ -126,35 +117,25 @@ module.exports = {
 			});
 		}	
 	},
-	
 	category: async (req, res, _next) => {
-		let params = req.body;
-		let all = 'select * from menu where menu_category like ?';
-		let sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
-		const values = [params.menu_store_id, "%"+params.menu_category+"%"];
+		const {menu_store_id, menu_category} = req.body.params;
+		const all = 'select * from menu where menu_category like ?';
+		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
+		const sql = menu_store_id === 'all' ? all : sep;
+		const values = menu_store_id === 'all' ? [menu_store_id] : [menu_store_id, "%" + menu_category + "%"];
 		
 		try{
-		if (params.menu_store_id === 'all') {
-			result = await excuteStatement(
-				all, "%" + params.menu_category+ "%")
-				res.status(200).send({
-					ok: true,
-					data: {result}
-				})
-		}else{
-			result = await excuteStatement(
-				sep, values)      
-				res.status(200).send({
-					ok: true,
-					data: {result}
-				})
+			result = await excuteStatement(sql, values);
+			res.status(200).send({
+				ok: true,
+				data: {result}
+			})
 		}
+		catch (err) {
+			res.status(401).send({
+				ok: false,
+				message: err.message,
+			});
+		}	
 	}
-	catch (err) {
-		res.status(401).send({
-			ok: false,
-			message: err.message,
-		});
-	}	
-},
 }

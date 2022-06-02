@@ -13,7 +13,7 @@ json-bigint라이브러리 이용하여 처리
 /*
 전체 혹은 일부 매장의 메뉴 리스트 조회
 */
-router.search('/:menu_store_id', menuController.search);
+router.get('/:menu_store_id', menuController.search);
 
 /*메뉴 등록*/
 /*
