@@ -73,12 +73,14 @@ module.exports = {
 		let sql = null;
 		const { menu_stock, id } = req.body;
 		const values = [menu_stock, id];
+		const abs = 'update menu set menu_stock = ? where id = ?';
+		const rel = 'update menu set menu_stock = menu_stock + ? where id = ?';
 
 		try {
 			if (req.params.method === 'abs') {
-				sql = 'update menu set menu_stock = ? where id = ?';
+				sql = abs;
 			} else if (req.params.method === 'rel') {
-				sql = 'update menu set menu_stock = menu_stock + ? where id = ?';
+				sql = rel;
 			} else {
 				throw new Error('url에 마지막에 abs or rel 를 입력해 주세요');
 			}
@@ -94,5 +96,5 @@ module.exports = {
 				message: err.message,
 			});
 		}
-	},
+	}
 };
