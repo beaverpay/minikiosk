@@ -14,17 +14,17 @@ module.exports = {
 				data: { result },
 			});
 		} catch (err) {
-			const errMessage = err.status ? err.message : '알 수 없는 에러'
+			const errMessage = err.status ? err.message : '알 수 없는 에러';
 			res.status(err.status ?? 500).send({
 				ok: false,
-				message: errMessage
+				message: errMessage,
 			});
 		}
 	},
-	regist: async (req, res, _next) => {
+	regist: async (req, res, next) => {
 		const sql = 'insert into menu values(?,?,?,?,?,?,?)';
 		const user = req.user;
-		const { menu_name, menu_price, menu_desc, menu_category, menu_stock} = req.body;
+		const { menu_name, menu_price, menu_desc, menu_category, menu_stock } = req.body;
 		const { menu_store_id } = req.params;
 		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_category, menu_stock ?? 0];
 
@@ -39,19 +39,7 @@ module.exports = {
 				throw new Error('권한이 없습니다.');
 			}
 		} catch (err) {
-			console.log('===============');
-			console.log(err);
-			console.log('===============');
-			console.log(err.stack);
-			console.log('===============');
-			console.log(err.type);
-			console.log('===============');
-			console.log(`${err}`);
-			console.log('===============');
-			res.status(401).send({
-				ok: false,
-				message: err.message,
-			});
+			next(err);
 		}
 	},
 	delete: async (req, res, _next) => {
@@ -110,59 +98,53 @@ module.exports = {
 	name: async (req, res, _next) => {
 		const all = 'select * from menu where menu_name like ?';
 		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
-		const values = [req.params.id, "%"+req.params.name+"%"];
-		console.log(values)
-		try{
+		const values = [req.params.id, '%' + req.params.name + '%'];
+		console.log(values);
+		try {
 			if (req.params.id === 'all') {
-				result = await excuteStatement(
-					all, "%" + req.params.name + "%")
-					res.status(200).send({
-						ok: true,
-						data: {result}
-					})
-			}else{
-				result = await excuteStatement(
-					sep, values)      
-					res.status(200).send({
-						ok: true,
-						data: {result}
-					})
+				result = await excuteStatement(all, '%' + req.params.name + '%');
+				res.status(200).send({
+					ok: true,
+					data: { result },
+				});
+			} else {
+				result = await excuteStatement(sep, values);
+				res.status(200).send({
+					ok: true,
+					data: { result },
+				});
 			}
-		}
-		catch (err) {
+		} catch (err) {
 			res.status(401).send({
 				ok: false,
 				message: err.message,
 			});
-		}	
+		}
 	},
 	category: async (req, res, _next) => {
 		const all = 'select * from menu where menu_category like ?';
 		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
-		const values = [req.params.id, "%"+req.params.category+"%"];
-		console.log(values)
-		try{
-		if (req.params.id === 'all') {
-			result = await excuteStatement(
-				all, "%"+req.params.category+"%")
+		const values = [req.params.id, '%' + req.params.category + '%'];
+		console.log(values);
+		try {
+			if (req.params.id === 'all') {
+				result = await excuteStatement(all, '%' + req.params.category + '%');
 				res.status(200).send({
 					ok: true,
-					data: {result}
-				})
-		}else{
-			result = await excuteStatement(
-				sep, values)      
+					data: { result },
+				});
+			} else {
+				result = await excuteStatement(sep, values);
 				res.status(200).send({
 					ok: true,
-					data: {result}
-				})
-		}}
-		catch (err) {
+					data: { result },
+				});
+			}
+		} catch (err) {
 			res.status(401).send({
 				ok: false,
 				message: err.message,
 			});
-		}	
-	}
-}
-
+		}
+	},
+};
