@@ -1,8 +1,0 @@
-{
-    "host": "education.cvfyjqmexmc9.ap-northeast-2.rds.amazonaws.com", 
-    "port": 3306,
-    "user": "ojawl1204",
-    "password": "12341234",
-    "database": "education",
-    "connectionLimit": 5
-} 
