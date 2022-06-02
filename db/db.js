@@ -14,7 +14,10 @@ const excuteStatement = async (sql, values) => {
         const result = await conn.query(sql, values)
         return result;
     } catch (err) {
-        throw new Error(err);
+        const error = new Error();
+        error.status = 400;
+        error.message = '잘못된 입력입니다.';
+        throw error;
     } finally {
         if (conn) {
             conn.end();

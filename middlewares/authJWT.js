@@ -14,7 +14,7 @@ const authJWT = (req, res, next) => {
 			});
 		}
 	} else {
-		res.status(500).send({
+		res.status(401).send({
 			ok: false,
 			message: '토큰이 존재하지 않습니다.',
 		});
