@@ -98,17 +98,16 @@ module.exports = {
 			});
 		}
 	},
-
 	name: async (req, res, _next) => {
-		const params = req.body;
-		let all = 'select * from menu where menu_name like ?';
-		let sep = 'select * from menu where menu_store_id = ? and  menu_name like ?';
-		const values = [params.menu_store_id, "%"+params.menu_name+"%"];
+		const { menu_name } = req.body;
+		const all = 'select * from menu where menu_name like ?';
+		const sep = 'select * from menu where menu_store_id = ? and  menu_name like ?';
+		const values = [req.params.id, "%"+menu_name+"%"];
 	
 		try{
-			if (params.menu_store_id === 'all') {
+			if (req.params.id === 'all') {
 				result = await excuteStatement(
-					all, "%" + params.menu_name+ "%")
+					all, "%" + menu_name+ "%")
 					res.status(200).send({
 						ok: true,
 						data: {result}
@@ -129,17 +128,16 @@ module.exports = {
 			});
 		}	
 	},
-	
 	category: async (req, res, _next) => {
-		let params = req.body;
-		let all = 'select * from menu where menu_category like ?';
-		let sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
-		const values = [params.menu_store_id, "%"+params.menu_category+"%"];
+		const { menu_category } = req.body;
+		const all = 'select * from menu where menu_category like ?';
+		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
+		const values = [req.params.id, "%"+menu_category+"%"];
 		
 		try{
-		if (params.menu_store_id === 'all') {
+		if (req.params.id === 'all') {
 			result = await excuteStatement(
-				all, "%" + params.menu_category+ "%")
+				all, "%" + menu_category+ "%")
 				res.status(200).send({
 					ok: true,
 					data: {result}
@@ -151,13 +149,12 @@ module.exports = {
 					ok: true,
 					data: {result}
 				})
-		}
+		}}
+		catch (err) {
+			res.status(401).send({
+				ok: false,
+				message: err.message,
+			});
+		}	
 	}
-	catch (err) {
-		res.status(401).send({
-			ok: false,
-			message: err.message,
-		});
-	}	
-},
 }
