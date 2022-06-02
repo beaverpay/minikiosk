@@ -33,9 +33,9 @@ router.delete('/:id', authJWT, menuController.delete);
 router.put('/stock/:method', menuController.update);
 
 /*메뉴 검색: 메뉴명 */ 
-router.get('/:id/:name', menuController.name);
+router.get('/name/:id/:name', menuController.name);
 
 /*메뉴 검색: 카테고리*/ 
-router.get('/:id/:category', menuController.category);
+router.get('/category/:id/:category', menuController.category);
 
 module.exports = router;
