@@ -21,11 +21,11 @@ module.exports = {
 		}
 	},
 	regist: async (req, res, _next) => {
-		const sql = 'insert into menu values(?,?,?,?,?,?)';
+		const sql = 'insert into menu values(?,?,?,?,?,?,?)';
 		const user = req.user;
-		const { menu_name, menu_price, menu_desc, menu_stock } = req.body;
+		const { menu_name, menu_price, menu_desc, menu_category, menu_stock} = req.body;
 		const { menu_store_id } = req.params;
-		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_stock ?? 0];
+		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_category, menu_stock ?? 0];
 
 		try {
 			if (user.id === parseInt(req.params.menu_store_id) || user.role === 'admin') {
