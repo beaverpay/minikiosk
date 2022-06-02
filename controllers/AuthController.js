@@ -7,14 +7,14 @@ module.exports = {
         const {user_store_id, user_password} = req.body
     
         try {
-            const managerInfo = await excuteStatement('select user_password,user_role from user where user_store_id = ?', [
+            const managerInfo = await excuteStatement('select user_password,user_role,user_store_id from user where user_store_id = ?', [
                 user_store_id,
             ]);
             if (!managerInfo[0]) {
                 throw new Error('없는 매장 입니다.');
             }
             if (await bcrypt.compareSync(user_password, managerInfo[0].user_password)) {
-                let user = { id: user_store_id, role: managerInfo[0].user_role };
+                let user = { id: managerInfo[0].user_store_id, role: managerInfo[0].user_role };
                 const accessToken = jwt.sign(user);
                 res.status(200).send({
                     // client에게 토큰을 반환합니다.
