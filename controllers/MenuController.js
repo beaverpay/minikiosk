@@ -9,12 +9,6 @@ module.exports = {
 
 		try {
 			const result = await excuteStatement(sql, [req.params.menu_store_id]);
-			console.log(result);
-			if(result === []){
-				const error = new Error('해당하는 id가 없습니다.');
-				error.status = 400;
-				throw error;
-			}
 			res.status(200).send({
 				ok: true,
 				data: { result },
@@ -45,6 +39,15 @@ module.exports = {
 				throw new Error('권한이 없습니다.');
 			}
 		} catch (err) {
+			console.log('===============');
+			console.log(err);
+			console.log('===============');
+			console.log(err.stack);
+			console.log('===============');
+			console.log(err.type);
+			console.log('===============');
+			console.log(`${err}`);
+			console.log('===============');
 			res.status(401).send({
 				ok: false,
 				message: err.message,
