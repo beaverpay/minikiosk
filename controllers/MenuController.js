@@ -97,6 +97,7 @@ module.exports = {
 		}
 	},
 	name: async (req, res, _next) => {
+		console.log(object);
 		const {menu_store_id, menu_name} = req.body.params;
  		const all = 'select * from menu where menu_name like ?';
  		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
