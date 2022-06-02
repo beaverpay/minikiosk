@@ -97,18 +97,27 @@ module.exports = {
 		}
 	},
 	name: async (req, res, _next) => {
-		const {menu_store_id, menu_name} = req.body.params;
+		const { menu_name } = req.body;
 		const all = 'select * from menu where menu_name like ?';
-		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
-		const sql = menu_store_id === 'all' ? all : sep;
-		const values = menu_store_id === 'all' ? [menu_store_id] : [menu_store_id, "%" + menu_name + "%"];
+		const sep = 'select * from menu where menu_store_id = ? and  menu_name like ?';
+		const values = [req.params.id, "%"+menu_name+"%"];
 	
 		try{
-			result = await excuteStatement(sql, values)
-			res.status(200).send({
-				ok: true,
-				data: {result}
-			})
+			if (req.params.id === 'all') {
+				result = await excuteStatement(
+					all, "%" + menu_name+ "%")
+					res.status(200).send({
+						ok: true,
+						data: {result}
+					})
+			}else{
+				result = await excuteStatement(
+					sep, values)      
+					res.status(200).send({
+						ok: true,
+						data: {result}
+					})
+			}
 		}
 		catch (err) {
 			res.status(401).send({
@@ -118,19 +127,27 @@ module.exports = {
 		}	
 	},
 	category: async (req, res, _next) => {
-		const {menu_store_id, menu_category} = req.body.params;
+		const { menu_category } = req.body;
 		const all = 'select * from menu where menu_category like ?';
 		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
-		const sql = menu_store_id === 'all' ? all : sep;
-		const values = menu_store_id === 'all' ? [menu_store_id] : [menu_store_id, "%" + menu_category + "%"];
+		const values = [req.params.id, "%"+menu_category+"%"];
 		
 		try{
-			result = await excuteStatement(sql, values);
-			res.status(200).send({
-				ok: true,
-				data: {result}
-			})
-		}
+		if (req.params.id === 'all') {
+			result = await excuteStatement(
+				all, "%" + menu_category+ "%")
+				res.status(200).send({
+					ok: true,
+					data: {result}
+				})
+		}else{
+			result = await excuteStatement(
+				sep, values)      
+				res.status(200).send({
+					ok: true,
+					data: {result}
+				})
+		}}
 		catch (err) {
 			res.status(401).send({
 				ok: false,
