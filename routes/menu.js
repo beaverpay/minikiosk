@@ -12,7 +12,7 @@ json-bigint라이브러리 이용하여 처리
 /*
 전체 혹은 일부 매장의 메뉴 리스트 조회
 */
-router.get('/:menu_store_id', menuController.search);
+router.search('/:menu_store_id', menuController.search);
 
 /*메뉴 등록*/
 /*
@@ -30,5 +30,11 @@ router.delete('/:id', authJWT, menuController.delete);
 
 /*메뉴 재고 수정 : abs 재고를 입력한 값으로 변경 / rel 원래 재고에 더하고 빼기*/
 router.put('/stock/:method', menuController.update);
+
+/*메뉴 검색: 메뉴명 */ 
+router.post('/search/name', menuController.name);
+
+/*메뉴 검색: 카테고리*/ 
+router.post('/search/category', menuController.category);
 
 module.exports = router;
