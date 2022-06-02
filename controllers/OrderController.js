@@ -33,7 +33,8 @@ module.exports = {
     values.push(values[1]); 
   
   if(idExists[0].A > 0 && stockCnt[0].menu_stock !== 0){
-    excuteStatement('insert into orders(id, menu_id, order_amount, order_total) values (?,?,?,( select menu_price * ? from menu where id = ? ) )', values).catch(err=>{
+    excuteStatement(
+        'insert into orders(id, menu_id, order_amount, order_total) values (?,?,?,( select menu_price * ? from menu where id = ? ) )', values).catch(err=>{
       res.send(`${err}`)
     }).then(
       (result) => {

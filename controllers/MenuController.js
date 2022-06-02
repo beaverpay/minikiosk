@@ -97,15 +97,14 @@ module.exports = {
 	},
 
 	name: async (req, res, _next) => {
-		const { menu_name } = req.body;
 		const all = 'select * from menu where menu_name like ?';
-		const sep = 'select * from menu where menu_store_id = ? and  menu_name like ?';
-		const values = [req.params.id, "%"+menu_name+"%"];
-	
+		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
+		const values = [req.params.id, "%"+req.params.name+"%"];
+		console.log(values)
 		try{
 			if (req.params.id === 'all') {
 				result = await excuteStatement(
-					all, "%" + menu_name+ "%")
+					all, "%" + req.params.name + "%")
 					res.status(200).send({
 						ok: true,
 						data: {result}
@@ -128,15 +127,14 @@ module.exports = {
 	},
 	
 	category: async (req, res, _next) => {
-		const { menu_category } = req.body;
 		const all = 'select * from menu where menu_category like ?';
 		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
-		const values = [req.params.id, "%"+menu_category+"%"];
-		
+		const values = [req.params.id, "%"+req.params.category+"%"];
+		console.log(values)
 		try{
 		if (req.params.id === 'all') {
 			result = await excuteStatement(
-				all, "%" + menu_category+ "%")
+				all, "%"+req.params.category+"%")
 				res.status(200).send({
 					ok: true,
 					data: {result}
