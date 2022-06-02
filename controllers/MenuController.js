@@ -9,14 +9,21 @@ module.exports = {
 
 		try {
 			const result = await excuteStatement(sql, [req.params.menu_store_id]);
+			console.log(result);
+			if(result === []){
+				const error = new Error('해당하는 id가 없습니다.');
+				error.status = 400;
+				throw error;
+			}
 			res.status(200).send({
 				ok: true,
 				data: { result },
 			});
 		} catch (err) {
-			res.status(401).send({
+			const errMessage = err.status ? err.message : '알 수 없는 에러'
+			res.status(err.status ?? 500).send({
 				ok: false,
-				message: err.message,
+				message: errMessage
 			});
 		}
 	},
