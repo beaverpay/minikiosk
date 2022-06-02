@@ -5,7 +5,7 @@ module.exports = {
     search: async (req, res, next) => {
         try {
             result = await excuteStatement(
-                'select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from orders left join menu on orders.menu_id=menu.id')
+                'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id')
                 res.status(200).send({
                     ok: true,
                     data: JSON.parse(JSONbig.stringify(result))
