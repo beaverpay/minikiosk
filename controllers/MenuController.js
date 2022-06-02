@@ -1,6 +1,5 @@
 const excuteStatement = require('../db/db');
 const JSONbig = require('json-bigint');
-const Menu = require('../models/Menu')
 
 module.exports = {
 	search: async (req, res, _next) => {
