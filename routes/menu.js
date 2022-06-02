@@ -1,5 +1,4 @@
 const express = require('express');
-const excuteStatement = require('../db/db');
 const authJWT = require('../middlewares/authJWT');
 const router = express.Router();
 const menuController = require('../controllers/MenuController.js');
