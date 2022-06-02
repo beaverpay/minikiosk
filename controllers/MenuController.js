@@ -72,12 +72,13 @@ module.exports = {
 	update: async (req, res, _next) => {
 		let sql = null;
 		const { menu_stock, id } = req.body;
-		const values = [menu_stock, id];
+		const { method } = req.params;
+		const values = [ menu_stock, id ];
 
 		try {
-			if (req.params.method === 'abs') {
+			if (method === 'abs') {
 				sql = 'update menu set menu_stock = ? where id = ?';
-			} else if (req.params.method === 'rel') {
+			} else if (method === 'rel') {
 				sql = 'update menu set menu_stock = menu_stock + ? where id = ?';
 			} else {
 				throw new Error('url에 마지막에 abs or rel 를 입력해 주세요');
@@ -95,7 +96,6 @@ module.exports = {
 			});
 		}
 	},
-
 	name: async (req, res, _next) => {
 		const all = 'select * from menu where menu_name like ?';
 		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
@@ -125,7 +125,6 @@ module.exports = {
 			});
 		}	
 	},
-	
 	category: async (req, res, _next) => {
 		const all = 'select * from menu where menu_category like ?';
 		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
@@ -146,13 +145,12 @@ module.exports = {
 					ok: true,
 					data: {result}
 				})
-		}
+		}}
+		catch (err) {
+			res.status(401).send({
+				ok: false,
+				message: err.message,
+			});
+		}	
 	}
-	catch (err) {
-		res.status(401).send({
-			ok: false,
-			message: err.message,
-		});
-	}	
-},
 }
