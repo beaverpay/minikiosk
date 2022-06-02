@@ -5,7 +5,7 @@ module.exports = {
     search: async (req, res, next) => {
         try {
             result = await excuteStatement(
-                'select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from education.orders left join education.menu on orders.menu_id=menu.id')
+                'select orders.id, menu.menu_name, menu.menu_price, orders.order_amount, order_total from orders left join menu on orders.menu_id=menu.id')
                 res.status(200).send({
                     ok: true,
                     data: JSON.parse(JSONbig.stringify(result))
@@ -34,7 +34,7 @@ module.exports = {
   
   if(idExists[0].A > 0 && stockCnt[0].menu_stock !== 0){
     excuteStatement(
-        'insert into orders(id, menu_id, order_amount, order_total) values (?,?,?,( select menu_price * ? from menu where id = ? ) )', values).catch(err=>{
+        'insert into orders(id, menu_id, order_amount, order_total) values (?,?,?,( select menu_price * ? from menu where id = ?) )', values).catch(err=>{
       res.send(`${err}`)
     }).then(
       (result) => {
