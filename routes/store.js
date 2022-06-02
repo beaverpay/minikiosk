@@ -1,8 +1,6 @@
 const express = require('express');
 const authJWT = require('../middlewares/authJWT');
-const excuteStatement = require('../db/db');
 const router = express.Router();
-const JSONbig = require('json-bigint');
 const storeController = require('../controllers/StoreController');
 
 /* 매장의 이름과 지점을 받아 매장 id를 반환 */

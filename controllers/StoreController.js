@@ -23,12 +23,12 @@ module.exports = {
         }
     },
     create : async (req, res, _next) => {
-        const {store_id, role} = req;
+        const user = req.user;
         const params = req.body;
         const values = [null, params.store_name, params.store_branch, params.store_tel];
     
         try {
-            if (store_id === 1 && role === 'admin') {
+            if (user.id === 1 && user.role === 'admin') {
                 const result = await excuteStatement('insert into store values(?,?,?,?)', values);
                 res.status(200).send({
                     ok: true,
@@ -45,12 +45,11 @@ module.exports = {
         }
     },
     delete : async (req, res, _next) => {
-        const store_id = req.store_id;
-        const role = req.role;
+        const user = req.user;
         const values = [req.params.store_id];
 
         try {
-            if (store_id === 1 && role === 'admin') {
+            if (user.id === 1 && user.role === 'admin') {
                 const result = await excuteStatement('delete from store where store_id = ?', values);
                 if (result.affectedRows > 0) {
                     res.status(200).send({
