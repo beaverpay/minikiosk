@@ -13,7 +13,7 @@ json-bigint라이브러리 이용하여 처리
 /*
 전체 혹은 일부 매장의 메뉴 리스트 조회
 */
-router.get('/:menu_store_id', menuController.search);
+router.search('/:menu_store_id', menuController.search);
 
 /*메뉴 등록*/
 /*
@@ -35,47 +35,9 @@ router.put('/stock/:method', menuController.update);
 
 
 /*메뉴 검색: 메뉴명 */ 
-router.post('/search/name', async function (req, res, _next) {
-    let params = req.body;
-    const values = [params.menu_store_id, "%"+params.menu_name+"%"];
-
-        if (params.menu_store_id === 'all') {
-            result = await excuteStatement(
-                "select * from menu where menu_name like ? ", "%" + params.menu_name+ "%")
-                res.status(200).send({
-                    ok: true,
-                    data: {result}
-                })
-        }else{
-            result = await excuteStatement(
-                "select * from menu where menu_store_id = ? and  menu_name like ? ", values)      
-                res.status(200).send({
-                    ok: true,
-                    data: {result}
-                })
-        }
-});
+router.post('/search/name', menuController.name);
 
 /*메뉴 검색: 카테고리*/ 
-router.post('/search/category', async function (req, res, _next) {
-    let params = req.body;
-    const values = [params.menu_store_id, "%"+params.menu_category+"%"];
-
-        if (params.menu_store_id === 'all') {
-            result = await excuteStatement(
-                "select * from menu where menu_category like ? ", "%" + params.menu_category+ "%")
-                res.status(200).send({
-                    ok: true,
-                    data: {result}
-                })
-        }else{
-            result = await excuteStatement(
-                "select * from menu where menu_store_id = ? and  menu_category like ? ", values)      
-                res.status(200).send({
-                    ok: true,
-                    data: {result}
-                })
-        }
-});
+router.post('/search/category', menuController.category);
 
 module.exports = router;
