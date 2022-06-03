@@ -8,16 +8,14 @@ const authJWT = (req, res, next) => {
 			req.user = new User(result.id, result.role)
 			next();
 		} else {
-			res.status(401).send({
-				ok: false,
-				message: result.message, // jwt가 만료되었다면 메세지는 'jwt expired'입니다.
-			});
+			const error = new Error(result.message); // jwt가 만료되었다면 메세지는 'jwt expired'입니다.
+			error.status = 401;
+			throw error;
 		}
 	} else {
-		res.status(401).send({
-			ok: false,
-			message: '토큰이 존재하지 않습니다.',
-		});
+		const error = new Error('토큰이 존재하지 않습니다.');
+		error.status = 401;
+		throw error;
 	}
 };
 

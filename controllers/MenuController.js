@@ -2,23 +2,20 @@ const excuteStatement = require('../db/db');
 const JSONbig = require('json-bigint');
 
 module.exports = {
-	search: async (req, res, _next) => {
+	search: async (req, res, next) => {
 		const all = 'select * from menu';
 		const sep = 'select * from menu where menu_store_id = ?';
-		const sql = req.params.menu_store_id === 'all' ? all : sep;
+		const menu_store_id = parseInt(req.params.menu_store_id);
+		const sql = menu_store_id === 'all' ? all : sep;
 
 		try {
-			const result = await excuteStatement(sql, [req.params.menu_store_id]);
+			const result = await excuteStatement(sql, [menu_store_id]);
 			res.status(200).send({
 				ok: true,
 				data: { result },
 			});
 		} catch (err) {
-			const errMessage = err.status ? err.message : '알 수 없는 에러';
-			res.status(err.status ?? 500).send({
-				ok: false,
-				message: errMessage,
-			});
+			throw err;
 		}
 	},
 	regist: async (req, res, next) => {
@@ -27,22 +24,17 @@ module.exports = {
 		const { menu_name, menu_price, menu_desc, menu_category, menu_stock } = req.body;
 		const { menu_store_id } = req.params;
 		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_category, menu_stock ?? 0];
-
 		try {
-			if (user.id === parseInt(req.params.menu_store_id) || user.role === 'admin') {
-				const result = await excuteStatement(sql, values);
-				res.status(200).send({
-					ok: true,
-					data: JSON.parse(JSONbig.stringify(result)),
-				});
-			} else {
-				throw new Error('권한이 없습니다.');
-			}
+			const result = await excuteStatement(sql, values);
+			res.status(201).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
+			});
 		} catch (err) {
-			next(err);
+			throw err;
 		}
 	},
-	delete: async (req, res, _next) => {
+	delete: async (req, res, next) => {
 		const sql = 'delete from menu where id = ?';
 		const user = req.user;
 		const values = [req.params.id];
@@ -51,36 +43,30 @@ module.exports = {
 			const menu_store_id = await excuteStatement('select menu_store_id from menu where id = ?', values)
 				.menu_store_id;
 			//해당 매장의 매니저이거나 관리자이면
-			if (user.id === parseInt(menu_store_id) || user.role === 'admin') {
-				const result = await excuteStatement(sql, values);
-				res.status(200).send({
-					ok: true,
-					data: JSON.parse(JSONbig.stringify(result)),
-				});
-			} else {
-				throw new Error('권한이 없습니다.');
-			}
-		} catch (err) {
-			res.status(401).send({
-				ok: false,
-				message: err.message,
+			const result = await excuteStatement(sql, values);
+			res.status(200).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
 			});
+		} catch (err) {
+			throw err;
 		}
 	},
-	update: async (req, res, _next) => {
+	update: async (req, res, next) => {
 		let sql = null;
 		const { menu_stock, id } = req.body;
 		const values = [menu_stock, id];
-		const abs = 'update menu set menu_stock = ? where id = ?';
-		const rel = 'update menu set menu_stock = menu_stock + ? where id = ?';
-
+		const method = {
+			abs : 'update menu set menu_stock = ? where id = ?',
+			rel : 'update menu set menu_stock = menu_stock + ? where id = ?'
+		}
 		try {
-			if (req.params.method === 'abs') {
-				sql = abs;
-			} else if (req.params.method === 'rel') {
-				sql = rel;
+			if (req.params.method === 'abs' || req.params.method === 'rel') {
+				sql = method[req.params.method];
 			} else {
-				throw new Error('url에 마지막에 abs or rel 를 입력해 주세요');
+				const error = new Error('Bad Request : url에 마지막에 abs or rel 를 입력해 주세요');
+				error.status(400)
+				throw error;
 			}
 
 			const result = await excuteStatement(sql, values);
@@ -89,62 +75,39 @@ module.exports = {
 				data: JSON.parse(JSONbig.stringify(result)),
 			});
 		} catch (err) {
-			res.status(401).send({
-				ok: false,
-				message: err.message,
-			});
+			throw err
 		}
 	},
-	name: async (req, res, _next) => {
+	name: async (req, res, next) => {
 		const all = 'select * from menu where menu_name like ?';
 		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
-		const values = [req.params.id, '%' + req.params.name + '%'];
-		console.log(values);
+		const sql = req.params.id === 'all' ? all : sep;
+		const values = req.params.id === 'all' ? ['%' + req.params.name + '%'] : [req.params.id, '%' + req.params.name + '%'];
+
 		try {
-			if (req.params.id === 'all') {
-				result = await excuteStatement(all, '%' + req.params.name + '%');
-				res.status(200).send({
-					ok: true,
-					data: { result },
-				});
-			} else {
-				result = await excuteStatement(sep, values);
-				res.status(200).send({
-					ok: true,
-					data: { result },
-				});
-			}
-		} catch (err) {
-			res.status(401).send({
-				ok: false,
-				message: err.message,
+			result = await excuteStatement(sql, values);
+			res.status(200).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
 			});
+		} catch (err) {
+			throw err;
 		}
 	},
-	category: async (req, res, _next) => {
+	category: async (req, res, next) => {
 		const all = 'select * from menu where menu_category like ?';
 		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
-		const values = [req.params.id, '%' + req.params.category + '%'];
+		const sql = req.params.id === 'all' ? all : sep;
+		const values = req.params.id === 'all' ? ['%' + req.params.category + '%'] : [req.params.id, '%' + req.params.category + '%'];
 		console.log(values);
 		try {
-			if (req.params.id === 'all') {
-				result = await excuteStatement(all, '%' + req.params.category + '%');
-				res.status(200).send({
-					ok: true,
-					data: { result },
-				});
-			} else {
-				result = await excuteStatement(sep, values);
-				res.status(200).send({
-					ok: true,
-					data: { result },
-				});
-			}
-		} catch (err) {
-			res.status(401).send({
-				ok: false,
-				message: err.message,
+			result = await excuteStatement(sql, values);
+			res.status(200).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
 			});
+		} catch (err) {
+			throw err;
 		}
 	},
 };
