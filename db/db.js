@@ -12,7 +12,7 @@ const excuteStatement = async (sql, values) => {
 		const result = await conn.query(sql, values);
 		return result;
 	} catch (err) {
-        const error = new Error('Bad Request : sql 에러')
+        const error = new Error(`Bad Request : ${err.code}`)
         error.status = 400
 		throw error;
 	} finally {

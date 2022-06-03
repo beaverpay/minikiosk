@@ -49,13 +49,9 @@ app.use((err, req, res, _next) => {
 	res.locals.message = err.message;
 	res.locals.error = err;
 	
-	console.log('===================');
-	console.log('app.js');
-	console.log('===================');
-	console.log(err);
 	// render the error page
 	res.status(err.status || 500);
-	res.status(err.status).send({
+	res.send({
 		ok:false,
 		message: err.message
 	});

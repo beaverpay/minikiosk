@@ -61,16 +61,16 @@ module.exports = {
               });
           });
       } else if (idExists[0].A === 0) {
-        const error = new Error('메뉴가 존재하지 않습니다.');
-        error.status = 401;
+        const error = new Error('Bad Request : 메뉴가 존재하지 않습니다.');
+        error.status = 400;
         throw err;
       } else if (stockCnt[0].menu_stock === 0) {
-        const error = new Error('재고가 부족합니다.');
-        error.status = 401;
+        const error = new Error('Bad Request : 재고가 부족합니다.');
+        error.status = 400;
         throw err;
       } else {
-        const error = new Error('주문 실패');
-        error.status = 401;
+        const error = new Error('Bad Request : 주문 실패');
+        error.status = 400;
         throw err;
       }
     } catch (err) {
