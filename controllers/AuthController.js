@@ -3,7 +3,7 @@ const jwt = require('../util/jwtUtil');
 const bcrypt = require('bcrypt');
 
 module.exports = {
-    login : async (req, res, _next) => {
+    async login(req, res, next){
         const {user_store_id, user_password} = req.body
     
         try {
@@ -13,7 +13,7 @@ module.exports = {
             if (!managerInfo[0]) {
                 throw new Error('없는 매장 입니다.');
             }
-            if (await bcrypt.compareSync(user_password, managerInfo[0].user_password)) {
+            if (await bcrypt.compare(user_password, managerInfo[0].user_password)) {
                 let user = { id: managerInfo[0].user_store_id, role: managerInfo[0].user_role };
                 const accessToken = jwt.sign(user);
                 res.status(200).send({
@@ -30,10 +30,7 @@ module.exports = {
                 });
             }
         } catch (err) {
-            res.status(500).send({
-                ok: false,
-                message: err.message,
-            });
+            next(err);
         }
     }
 }
