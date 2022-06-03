@@ -3,13 +3,11 @@ const bcrypt = require('bcrypt');
 const JSONbig = require('json-bigint');
 
 module.exports = {
-    create : async (req, res, next) => {
-        const user = req.user
+    regist : async (req, res, next) => {
         const params = req.body
-        const password = await bcrypt.hashSync(params.user_password, 10);
+        const password = await bcrypt.hash(params.user_password, 10);
         const values = [null, password, 'manager', params.user_store_id]
         try{
-            //토큰의 권한이 관리자일 경우
             const result = await excuteStatement('insert into user values(?,?,?,?)', values)
             res.status(201).send({
                 ok: true,
@@ -19,7 +17,7 @@ module.exports = {
             next(err);
         }
     },
-    delete : async (req, res, next) => {
+    remove : async (req, res, next) => {
         try{
             const result = await excuteStatement('delete from user where user_store_id = ?', [req.params.user_store_id])
             if(result.affectedRows > 0){

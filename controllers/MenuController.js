@@ -35,7 +35,6 @@ module.exports = {
 	},
 	async delete(req, res, next){
 		const sql = 'delete from menu where id = ?';
-		const user = req.user;
 		const values = [req.params.id];
 		try {
 			//어떤 매장의 메뉴인지 확인

@@ -13,7 +13,7 @@ const authJWT = (req, res, next) => {
 			throw error;
 		}
 	} else {
-		const error = new Error('토큰이 존재하지 않습니다.');
+		const error = new Error('Unauthorized : 토큰이 존재하지 않습니다.');
 		error.status = 401;
 		throw error;
 	}

@@ -1,4 +1,4 @@
-//미들웨어에 사용자 변수를 쓰기 위한 구조
+//미들웨어에 사용자 파라미터를 쓰기 위한 구조
 function isPositiveNum(param)
 {
     return (req, res, next) => {
