@@ -2,8 +2,8 @@ const express = require('express');
 const OrderController = require('../controllers/OrderController');
 const router = express.Router();
 
-router.get('/orders', OrderController.search);
+router.get('/', OrderController.search);
 
-router.post('/regist', OrderController.post); 
+router.post('/', OrderController.post);
 
 module.exports = router;
