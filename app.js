@@ -9,6 +9,7 @@ const orderRouter = require('./routes/order');
 const menuRouter = require('./routes/menu');
 const authRouter = require('./routes/auth');
 const storeRouter = require('./routes/store');
+var cors = require('cors'); //교차통신 모듈 호출
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/order', orderRouter);
 app.use('/menu', menuRouter);
 app.use('/auth', authRouter);
 app.use('/store', storeRouter);
+app.use(cors())//교차통신 적용
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
