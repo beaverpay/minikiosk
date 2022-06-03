@@ -2,12 +2,12 @@ const excuteStatement = require('../db/db');
 const JSONbig = require('json-bigint');
 
 module.exports = {
-	search: async (req, res, next) => {
+	async search(req, res, next){
 		const all = 'select * from menu';
 		const sep = 'select * from menu where menu_store_id = ?';
-		const menu_store_id = parseInt(req.params.menu_store_id);
-		const sql = menu_store_id === 'all' ? all : sep;
-
+		const menu_store_id = parseInt(req.params.menu_store_id ?? 0);
+		const sql = menu_store_id ? sep : all;
+		console.log(sql);
 		try {
 			const result = await excuteStatement(sql, [menu_store_id]);
 			res.status(200).send({
@@ -15,12 +15,11 @@ module.exports = {
 				data: { result },
 			});
 		} catch (err) {
-			throw err;
+			next(err);
 		}
 	},
-	regist: async (req, res, next) => {
+	async regist(req, res, next){
 		const sql = 'insert into menu values(?,?,?,?,?,?,?)';
-		const user = req.user;
 		const { menu_name, menu_price, menu_desc, menu_category, menu_stock } = req.body;
 		const { menu_store_id } = req.params;
 		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_category, menu_stock ?? 0];
@@ -31,10 +30,10 @@ module.exports = {
 				data: JSON.parse(JSONbig.stringify(result)),
 			});
 		} catch (err) {
-			throw err;
+			next(err);
 		}
 	},
-	delete: async (req, res, next) => {
+	async delete(req, res, next){
 		const sql = 'delete from menu where id = ?';
 		const user = req.user;
 		const values = [req.params.id];
@@ -49,10 +48,10 @@ module.exports = {
 				data: JSON.parse(JSONbig.stringify(result)),
 			});
 		} catch (err) {
-			throw err;
+			next(err);
 		}
 	},
-	update: async (req, res, next) => {
+	async update(req, res, next){
 		let sql = null;
 		const { menu_stock, id } = req.body;
 		const values = [menu_stock, id];
@@ -75,10 +74,10 @@ module.exports = {
 				data: JSON.parse(JSONbig.stringify(result)),
 			});
 		} catch (err) {
-			throw err
+			next(err);
 		}
 	},
-	name: async (req, res, next) => {
+	async name(req, res, next){
 		const all = 'select * from menu where menu_name like ?';
 		const sep = 'select * from menu where menu_store_id = ? and menu_name like ?';
 		const sql = req.params.id === 'all' ? all : sep;
@@ -91,10 +90,10 @@ module.exports = {
 				data: JSON.parse(JSONbig.stringify(result)),
 			});
 		} catch (err) {
-			throw err;
+			next(err);
 		}
 	},
-	category: async (req, res, next) => {
+	async category(req, res, next){
 		const all = 'select * from menu where menu_category like ?';
 		const sep = 'select * from menu where menu_store_id = ? and  menu_category like ?';
 		const sql = req.params.id === 'all' ? all : sep;
@@ -107,7 +106,7 @@ module.exports = {
 				data: JSON.parse(JSONbig.stringify(result)),
 			});
 		} catch (err) {
-			throw err;
+			next(err);
 		}
 	},
 };

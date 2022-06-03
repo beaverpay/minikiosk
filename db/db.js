@@ -14,7 +14,7 @@ const excuteStatement = async (sql, values) => {
 	} catch (err) {
         const error = new Error('Bad Request : sql 에러')
         error.status = 400
-		throw err;
+		throw error;
 	} finally {
 		if (conn) {
 			conn.end();

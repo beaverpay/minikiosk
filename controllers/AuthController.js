@@ -3,7 +3,7 @@ const jwt = require('../util/jwtUtil');
 const bcrypt = require('bcrypt');
 
 module.exports = {
-    login : async (req, res, next) => {
+    async login(req, res, next){
         const {user_store_id, user_password} = req.body
     
         try {
@@ -15,7 +15,7 @@ module.exports = {
                 err.status = 400;
                 throw err;
             }
-            if (await bcrypt.compareSync(user_password, managerInfo[0].user_password)) {
+            if (await bcrypt.compare(user_password, managerInfo[0].user_password)) {
                 let user = { id: managerInfo[0].user_store_id, role: managerInfo[0].user_role };
                 const accessToken = jwt.sign(user);
                 res.status(200).send({
@@ -31,11 +31,7 @@ module.exports = {
                 throw err;
             }
         } catch (err) {
-            errMessage = err.status ? err.message : '알 수 없는 에러';
-            res.status(err.status ?? 500).send({
-                ok: false,
-                message: errMessage,
-            });
+            next(err);
         }
     }
 }

@@ -9,7 +9,7 @@ const orderRouter = require('./routes/order');
 const menuRouter = require('./routes/menu');
 const authRouter = require('./routes/auth');
 const storeRouter = require('./routes/store');
-var cors = require('cors'); //교차통신 모듈 호출
+const cors = require('cors'); //교차통신 모듈 호출
 
 const app = express();
 
@@ -30,13 +30,13 @@ function wrapAsync(fn) {
 	};
 }
 
+app.use(cors())//교차통신 적용å
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/order', orderRouter);
 app.use('/menu', menuRouter);
 app.use('/auth', authRouter);
 app.use('/store', storeRouter);
-app.use(cors())//교차통신 적용
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
@@ -48,7 +48,11 @@ app.use((err, req, res, _next) => {
 	// set locals, only providing error in development
 	res.locals.message = err.message;
 	res.locals.error = err;
-
+	
+	console.log('===================');
+	console.log('app.js');
+	console.log('===================');
+	console.log(err);
 	// render the error page
 	res.status(err.status || 500);
 	res.status(err.status).send({
