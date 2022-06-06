@@ -30,7 +30,7 @@ function wrapAsync(fn) {
 	};
 }
 
-app.use(cors())//교차통신 적용å
+app.use(cors()); //교차통신 적용å
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/order', orderRouter);
@@ -48,12 +48,12 @@ app.use((err, req, res, _next) => {
 	// set locals, only providing error in development
 	res.locals.message = err.message;
 	res.locals.error = err;
-	
+
 	// render the error page
 	res.status(err.status || 500);
 	res.send({
-		ok:false,
-		message: err.message
+		ok: false,
+		message: err.message,
 	});
 });
 
