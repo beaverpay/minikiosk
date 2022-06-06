@@ -18,6 +18,7 @@ module.exports = {
             if (await bcrypt.compare(user_password, managerInfo[0].user_password)) {
                 let user = { id: managerInfo[0].user_store_id, role: managerInfo[0].user_role };
                 const accessToken = jwt.sign(user);
+                console.log(user.id);
                 res.status(200).send({
                     // client에게 토큰을 반환합니다.
                     ok: true,
