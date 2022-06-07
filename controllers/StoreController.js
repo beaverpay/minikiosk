@@ -2,8 +2,9 @@ const excuteStatement = require('../db/db');
 const JSONbig = require('json-bigint');
 
 module.exports = {
+	async searchAll(){},
 	async search(req, res, next) {
-		const { store_name, store_branch } = req.query;
+		const { store_name, store_branch } = req.params;
 		const values = [store_name, store_branch];
 
 		try {
