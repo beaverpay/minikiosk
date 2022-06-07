@@ -6,7 +6,7 @@ const isAdmin = require('../middlewares/isAdmin')
 const isPositiveNum = require('../middlewares/isPositiveNum')
 
 /* 매장의 이름과 지점을 받아 매장 id를 반환 */
-router.get('/:store_name/:store_branch', storeController.search);
+router.get('/', storeController.search);
 
 /* admin 토큰 인증 후 매장 생성 */
 router.post('/', authJWT, isAdmin, storeController.create);

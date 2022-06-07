@@ -4,7 +4,7 @@ const JSONbig = require('json-bigint');
 module.exports = {
 	async searchAll(){},
 	async search(req, res, next) {
-		const { store_name, store_branch } = req.params;
+		const { store_name, store_branch } = req.query;
 		const values = [store_name, store_branch];
 
 		try {
