@@ -36,4 +36,11 @@ module.exports = {
 			next(err);
 		}
 	},
+	async serach(req, res, next){
+		try{
+			const result = await excuteStatement('select * from user')
+		}catch(err){
+			next(err);
+		}
+	}
 };
