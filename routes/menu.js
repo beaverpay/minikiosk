@@ -16,6 +16,7 @@ json-bigint라이브러리 이용하여 처리
 */
 router.get('/', menuController.search);
 router.get('/:menu_store_id', isPositiveNum('menu_store_id'), menuController.search);
+router.get('/details/:id', isPositiveNum('id'), menuController.details)
 
 /*메뉴 등록*/
 /*

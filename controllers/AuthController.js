@@ -22,7 +22,8 @@ module.exports = {
                     // client에게 토큰을 반환합니다.
                     ok: true,
                     data: {
-                        accessToken,
+                        storeId : user.id,
+                        accessToken : accessToken ,
                     },
                 });
             } else {

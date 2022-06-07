@@ -83,7 +83,7 @@ module.exports = {
 			req.params.id === 'all' ? ['%' + req.params.name + '%'] : [req.params.id, '%' + req.params.name + '%'];
 
 		try {
-			result = await excuteStatement(sql, values);
+			const result = await excuteStatement(sql, values);
 			res.status(200).send({
 				ok: true,
 				data: JSON.parse(JSONbig.stringify(result)),
@@ -100,9 +100,8 @@ module.exports = {
 			req.params.id === 'all'
 				? ['%' + req.params.category + '%']
 				: [req.params.id, '%' + req.params.category + '%'];
-		console.log(values);
 		try {
-			result = await excuteStatement(sql, values);
+			const result = await excuteStatement(sql, values);
 			res.status(200).send({
 				ok: true,
 				data: JSON.parse(JSONbig.stringify(result)),
@@ -111,4 +110,17 @@ module.exports = {
 			next(err);
 		}
 	},
+	async details(req, res, next){
+		const sql = 'select * from menu where id = ?';
+		const values = [req.params.id]
+		try{
+			const result = await excuteStatement(sql, values);
+			res.status(200).send({
+				ok:true,
+				data: JSON.parse(JSONbig.stringify(result))
+			})
+		}catch(err){
+			next(err);
+		}
+	}
 };
