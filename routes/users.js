@@ -5,7 +5,7 @@ const userController = require('../controllers/UserController.js');
 const isAdmin = require('../middlewares/isAdmin')
 const isPositiveNum = require('../middlewares/isPositiveNum')
 
-router.get('/', authJWT, isAdmin, userControlelr.serach)
+router.get('/', authJWT, isAdmin, userController.serach)
 /* admin 토큰 인증 후 매니저 생성 */
 router.post('/', authJWT, isAdmin, userController.regist);
 
