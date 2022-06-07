@@ -39,6 +39,10 @@ module.exports = {
 	async serach(req, res, next){
 		try{
 			const result = await excuteStatement('select * from user')
+			res.status(200).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
+			});
 		}catch(err){
 			next(err);
 		}
