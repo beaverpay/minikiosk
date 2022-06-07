@@ -2,7 +2,20 @@ const excuteStatement = require('../db/db');
 const JSONbig = require('json-bigint');
 
 module.exports = {
-	async searchAll(){},
+	async searchAll(req,res,next){
+		try {
+			const result = await excuteStatement(
+				'select store_id from store',
+				values,
+			);
+			res.status(200).send({
+				ok: true,
+				data: result,
+			});
+		} catch (err) {
+			next(err);
+		}
+	},
 	async search(req, res, next) {
 		const { store_name, store_branch } = req.query;
 		const values = [store_name, store_branch];
