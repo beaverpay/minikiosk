@@ -16,9 +16,10 @@ module.exports = {
 		}
 	},
 	async searchByStoreId(req, res, next){
+		console.log(req.params.menu_store_id);
 		try {
 			result = await excuteStatement(
-				'select * from order where menu_store_id = ?',[req.params.menu_store_id]
+				'select * from orders where menu_store_id = ?',[req.params.menu_store_id]
 			);
 			res.status(200).send({
 				ok: true,
