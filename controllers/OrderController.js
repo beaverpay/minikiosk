@@ -48,7 +48,7 @@ module.exports = {
 			values.push(values[2]);
 			values.push(values[1]);
 
-			if (idExists[0].A > 0 && stockCnt[0].menu_stock !== 0) {
+			if (idExists[0].A > 0 && stockCnt[0].menu_stock - params.order_amount >= 0) {
 				excuteStatement(
 					'insert into orders(id, order_store_id, menu_id, order_amount, order_total) values (?,?,?,?,( select menu_price * ? from menu where id = ?) )',
 					values,
@@ -73,15 +73,15 @@ module.exports = {
 			} else if (idExists[0].A === 0) {
 				const error = new Error('Bad Request : 메뉴가 존재하지 않습니다.');
 				error.status = 400;
-				throw err;
+				next(error);
 			} else if (stockCnt[0].menu_stock - params.order_amount < 0) {
 				const error = new Error('Bad Request : 재고가 부족합니다.');
 				error.status = 400;
-				throw err;
+				next(error);
 			} else {
 				const error = new Error('Bad Request : 주문 실패');
 				error.status = 400;
-				throw err;
+				next(error);
 			}
 		} catch (err) {
 			next(err);
