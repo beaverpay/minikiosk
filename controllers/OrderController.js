@@ -54,14 +54,14 @@ module.exports = {
 					values,
 				)
 					.catch((err) => {
-						throw err;
+						next(err)
 					})
 					.then((result) => {
 						values1.push(values[3]);
 						values1.push(values[2]);
 						excuteStatement('update menu set menu_stock = menu_stock - ? where id = ?', values1)
 							.catch((err) => {
-								throw err;
+								next(err)
 							})
 							.then((result) => {
 								res.status(201).send({
@@ -74,7 +74,7 @@ module.exports = {
 				const error = new Error('Bad Request : 메뉴가 존재하지 않습니다.');
 				error.status = 400;
 				throw err;
-			} else if (stockCnt[0].menu_stock === 0) {
+			} else if (stockCnt[0].menu_stock - params.order_amount < 0) {
 				const error = new Error('Bad Request : 재고가 부족합니다.');
 				error.status = 400;
 				throw err;
