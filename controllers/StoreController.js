@@ -5,7 +5,7 @@ module.exports = {
 	async search(req, res, next) {
 		const all = 'select * from store'
 		const sep = 'select store_id from store where store_name = ? and store_branch = ?'
-		const sql = req.query === {} ? sep : all
+		const sql = req.query === {} ? all : sep
 		const { store_name, store_branch } = req.query;
 		const values = [store_name, store_branch];
 
