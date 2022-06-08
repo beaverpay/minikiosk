@@ -23,7 +23,7 @@ router.get('/details/:id', isPositiveNum('id'), menuController.details)
 매장의 매니저 혹은 전체 관리자로부터 매장 id(pathString)와
 메뉴 정보(json)를 입력받아 등록
 */
-router.post('/:menu_store_id', isPositiveNum('menu_store_id'), authJWT, isAuthManagerOrAdmin, menuController.regist);
+router.post('/', authJWT, isAuthManagerOrAdmin, menuController.regist);
 
 /*메뉴 삭제 */
 /*

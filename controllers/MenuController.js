@@ -20,8 +20,7 @@ module.exports = {
 	},
 	async regist(req, res, next) {
 		const sql = 'insert into menu values(?,?,?,?,?,?,?)';
-		const { menu_name, menu_price, menu_desc, menu_category, menu_stock } = req.body;
-		const { menu_store_id } = req.params;
+		const { menu_store_id, menu_name, menu_price, menu_desc, menu_category, menu_stock } = req.body;
 		const values = [null, menu_store_id, menu_name, menu_price, menu_desc, menu_category, menu_stock ?? 0];
 		try {
 			const result = await excuteStatement(sql, values);
