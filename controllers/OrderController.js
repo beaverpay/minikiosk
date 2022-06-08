@@ -15,6 +15,19 @@ module.exports = {
 			next(err);
 		}
 	},
+	async searchByStoreId(req, res, next){
+		try {
+			result = await excuteStatement(
+				'select * from order where menu_store_id = ?',
+			);
+			res.status(200).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
+			});
+		} catch (err) {
+			next(err);
+		}
+	},
 	async post(req, res, next) {
 		const params = req.body;
 		const paramArray = Object.values(params);

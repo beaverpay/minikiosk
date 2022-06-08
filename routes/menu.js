@@ -34,7 +34,7 @@ router.delete('/:id', isPositiveNum('id'), authJWT, menuController.remove);
 
 /*메뉴 재고 수정 : abs 재고를 입력한 값으로 변경 / rel 원래 재고에 더하고 빼기*/
 router.put('/stock/:method', menuController.updateStock);
-router.put('/price', menuController.updatePrice);
+router.put('/price', authJWT, isAuthManagerOrAdmin, menuController.updatePrice);
 
 /*메뉴 검색: 메뉴명 */
 router.get('/:id/name/:name', isPositiveNum('id'), menuController.name);
