@@ -3,10 +3,12 @@ const JSONbig = require('json-bigint');
 
 module.exports = {
 	async search(req, res, next) {
+		const all = 'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id';
+		const sep = 'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id where order_store_id = ?';
+		const sql = req.params.id === 'all' ? all : sep;
+		const values = [req.params.id]
 		try {
-			result = await excuteStatement(
-				'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id',
-			);
+			const result = await excuteStatement(sql, values);
 			res.status(200).send({
 				ok: true,
 				data: JSON.parse(JSONbig.stringify(result)),
@@ -48,7 +50,7 @@ module.exports = {
 
 			if (idExists[0].A > 0 && stockCnt[0].menu_stock !== 0) {
 				excuteStatement(
-					'insert into orders(id, menu_store_id, menu_id, order_amount, order_total) values (?,?,?,?,( select menu_price * ? from menu where id = ?) )',
+					'insert into orders(id, order_store_id, menu_id, order_amount, order_total) values (?,?,?,?,( select menu_price * ? from menu where id = ?) )',
 					values,
 				)
 					.catch((err) => {
