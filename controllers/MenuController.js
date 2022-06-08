@@ -50,7 +50,7 @@ module.exports = {
 			next(err);
 		}
 	},
-	async update(req, res, next) {
+	async updateStock(req, res, next) {
 		let sql = null;
 		const { menu_stock, id } = req.body;
 		const values = [menu_stock, id];
@@ -67,6 +67,21 @@ module.exports = {
 				throw error;
 			}
 
+			const result = await excuteStatement(sql, values);
+			res.status(200).send({
+				ok: true,
+				data: JSON.parse(JSONbig.stringify(result)),
+			});
+		} catch (err) {
+			next(err);
+		}
+	},
+	async updatePrice(req, res, next) {
+		const { menu_price, id } = req.body;
+		const values = [menu_price, id];
+		const sql = 'update menu set menu_price = ? where id = ?'
+
+		try {
 			const result = await excuteStatement(sql, values);
 			res.status(200).send({
 				ok: true,
