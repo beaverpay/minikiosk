@@ -3,11 +3,12 @@ const JSONbig = require('json-bigint');
 
 module.exports = {
 	async search(req, res, next) {
+		const all = 'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id';
+		const sep = 'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id where order_store_id = ?';
+		const sql = req.params.id === 'all' ? all : sep;
 		const values = [req.params.id]
 		try {
-			result = await excuteStatement(
-				'select orders.id, menu_name, menu_price, order_amount, order_total from orders left join menu on orders.menu_id=menu.id where order_store_id = ?',
-				values);
+			const result = await excuteStatement(sql, values);
 			res.status(200).send({
 				ok: true,
 				data: JSON.parse(JSONbig.stringify(result)),
